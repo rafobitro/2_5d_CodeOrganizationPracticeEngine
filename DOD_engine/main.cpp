@@ -2,9 +2,12 @@
 #include <cstdint>
 #include <cmath>
 
-int WIDTH = 800;
-int HEIGHT = 600;
+int WIDTH = 1600;
+int HEIGHT = 900;
 uint32_t* framebuffer=(uint32_t*)malloc(4*WIDTH*HEIGHT);
+uint32_t* wall_texture = (uint32_t*)malloc(4 * WIDTH * HEIGHT);
+uint32_t* floor_texture = (uint32_t*)malloc(4 * WIDTH * HEIGHT);
+uint32_t* ciling_texture = (uint32_t*)malloc(4 * WIDTH * HEIGHT);
 
 
 
@@ -54,7 +57,8 @@ void render(Player* player) {
 	float ray_x = player->x;
 	float ray_y = player->y;
     float ray_angle  = (player->angle - Horizontal_FOV / 2.0f);
-
+	
+  
     //reycast rays to find walls 
 
     for (int i = 0;i < WIDTH;i++) {
@@ -77,11 +81,14 @@ void render(Player* player) {
         for (int j = 0;j < HEIGHT; j++) {
 
             if (j < ceilling_pixels) {
-				framebuffer[i + WIDTH * j] = 0xFF000000; //black cyling
+                
+				framebuffer[i + WIDTH * j] = wall_texture[(int)j % HEIGHT * WIDTH + (int)i % WIDTH]; //wall
             } else if (j < Wall_pixels + ceilling_pixels) {
-				framebuffer[i + WIDTH * j] = 0xFFFF0000; //red wall
+				framebuffer[i + WIDTH * j] = floor_texture[(int)j % HEIGHT * WIDTH + (int)i % WIDTH]; //wall
             } else {
-				framebuffer[i + WIDTH * j] = 0xFF00FF00; //green floor
+				framebuffer[i + WIDTH * j] = wall_texture [(int)ray_x % HEIGHT * WIDTH + (int)ray_y % WIDTH];
+                    
+                    
 			}
         }
         
@@ -93,9 +100,45 @@ void render(Player* player) {
 
 
 
+void generate_horizontal_line_texture (uint32_t* bitmap) {
+    for (int i=0;i<WIDTH;i++) {
+		boolean line_drowing = false;
+        for (int j = 0;j < HEIGHT;j++) {
+            
+            if (j%10==0)
+				line_drowing = !line_drowing;
+            if (line_drowing)
+            {
+				bitmap[i + WIDTH * j] = 0xFF00FF00;
+            }
+            else {
+                bitmap[i + WIDTH * j] = 0xFF000000;
+            }
 
+        }
+    }
+}
 
-void Populate_Bitmap(uint32_t* bitmap) {
+void generate_vertical_line_texture (uint32_t* bitmap) {
+    for (int i=0;i<WIDTH;i++) {
+        boolean line_drowing = false;
+        for (int j = 0;j < HEIGHT;j++) {
+            
+            if (i%10==0)
+                line_drowing = !line_drowing;
+
+            if (line_drowing)
+            {
+                bitmap[i + WIDTH * j] = 0xFF00FF00;
+            }
+            else {
+                bitmap[i + WIDTH * j] = 0xFF000000;
+            }
+        }
+    }
+}
+
+void generate_gradient_texture (uint32_t* bitmap) {
 
     for (int i=0;i<WIDTH;i++) {
 
@@ -115,6 +158,9 @@ void Populate_Bitmap(uint32_t* bitmap) {
     }
 }
 
+
+
+
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM w, LPARAM l) {
     if(msg == WM_DESTROY) PostQuitMessage(0);
     return DefWindowProcW(hwnd, msg, w, l);
@@ -127,8 +173,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
     wc.lpszClassName = L"engine";
     RegisterClassW(&wc);
 
+    RECT rect = { 0, 0, WIDTH, HEIGHT };
+    AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, FALSE);
+
     HWND hwnd = CreateWindowExW(0, L"engine", L"DOD Engine",
-        WS_OVERLAPPEDWINDOW, 100, 100, WIDTH, HEIGHT,
+        WS_OVERLAPPEDWINDOW, 100, 100,
+        rect.right - rect.left,   // adjusted width
+        rect.bottom - rect.top,   // adjusted height
         NULL, NULL, hInstance, NULL);
 
     ShowWindow(hwnd, show);
@@ -146,13 +197,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
 	
         
     
-	//Populate_Bitmap(framebuffer);
 	Player player;
     Init_Player(&player);
 
-	render(&player);
-
-
+    
+        generate_gradient_texture (wall_texture);
+	generate_horizontal_line_texture(floor_texture);
+    generate_vertical_line_texture (ciling_texture);
+	
+	//generate_vertical_line_texture(framebuffer);
+    //generate_horizontal_line_texture(framebuffer);
+   //generate_gradient_texture(framebuffer);
 
     MSG msg = {0};
     while (1) {
@@ -162,8 +217,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
             DispatchMessageW(&msg);
         }
 
-        //player.angle += 1.0f;
+        
+
+        player.angle += 1.0f;
         render(&player);
+		
 
         HDC dc = GetDC(hwnd);
         StretchDIBits(dc, 0, 0, WIDTH, HEIGHT, 0, 0, WIDTH, HEIGHT, framebuffer, &info, DIB_RGB_COLORS, SRCCOPY);
