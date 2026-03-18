@@ -1,4 +1,119 @@
 #include <windows.h>
+#include <cstdint>
+#include <cmath>
+
+int WIDTH = 800;
+int HEIGHT = 600;
+uint32_t* framebuffer=(uint32_t*)malloc(4*WIDTH*HEIGHT);
+
+
+
+
+
+int map[16][8] = {
+    {1,1,1,1,1,1,1,1},
+    {1,0,1,0,0,0,0,1},
+    {1,1,1,0,0,0,0,1},
+    {1,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,1},
+    {1,1,1,0,0,0,0,1},
+    {1,0,1,0,0,0,0,1},
+    {1,0,1,0,0,0,0,1},
+    {1,0,1,0,0,0,0,1},
+    {1,0,1,0,0,0,0,1},
+    {1,1,1,0,0,0,0,1},
+    {1,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,1},
+    {1,1,1,0,0,0,0,1},
+    {1,0,1,0,0,0,0,1},
+    {1,1,1,1,1,1,1,1},
+};
+
+struct Player {
+    int x, y;
+    float angle;
+};
+
+
+
+void Init_Player(Player* player) {
+    player->x = 40;
+    player->y = 40;
+	player->angle = 180;
+
+	
+}
+
+
+void render(Player* player) {
+    int distance_to_wall = 0;
+    int player_hight = 15;
+    int wall_hight = 30;
+	int Horizontal_FOV = 90;
+	int vertical_FOV = 90;
+	float ray_x = player->x;
+	float ray_y = player->y;
+    float ray_angle  = (player->angle - Horizontal_FOV / 2.0f);
+
+    //reycast rays to find walls 
+
+    for (int i = 0;i < WIDTH;i++) {
+		ray_angle += (1.0f / WIDTH) * Horizontal_FOV;
+        float ray_x = player->x;
+        float ray_y = player->y;
+        int distance_to_wall = 0;
+        while(map[(int)ray_y/10][(int)ray_x / 10] == 0 ) {
+            distance_to_wall++;
+            ray_x += std::cos(ray_angle * 3.14159f / 180.0f);
+            ray_y += std::sin(ray_angle * 3.14159f / 180.0f);
+        }
+
+		
+        int total_visable_hight = distance_to_wall * 2;
+		int Wall_pixels = HEIGHT * wall_hight / total_visable_hight;
+        int flor_pixels = (HEIGHT /2) - (Wall_pixels/2 );
+        int ceilling_pixels = flor_pixels;
+
+        for (int j = 0;j < HEIGHT; j++) {
+
+            if (j < ceilling_pixels) {
+				framebuffer[i + WIDTH * j] = 0xFF000000; //black cyling
+            } else if (j < Wall_pixels + ceilling_pixels) {
+				framebuffer[i + WIDTH * j] = 0xFFFF0000; //red wall
+            } else {
+				framebuffer[i + WIDTH * j] = 0xFF00FF00; //green floor
+			}
+        }
+        
+        
+        
+    }
+
+}
+
+
+
+
+
+void Populate_Bitmap(uint32_t* bitmap) {
+
+    for (int i=0;i<WIDTH;i++) {
+
+        for (int j = 0;j < HEIGHT;j++) {
+          
+            float fx = (float)i / WIDTH;
+            float fy = (float)j / HEIGHT;
+
+            uint8_t red = (uint8_t)(255.0f * (1.0f - std::sqrt(fx * fx + fy * fy) / std::sqrt(2.0f)));
+            red += (uint8_t)(255.0f * (1.0f - std::sqrt((1 - fx) * (1 - fx) + (1 - fy) * (1 - fy)) / std::sqrt(2.0f)));
+            uint8_t green = (uint8_t)(255.0f * (1.0f - std::sqrt((1 - fx) * (1 - fx) + fy * fy) / std::sqrt(2.0f)));
+            uint8_t blue = (uint8_t)(255.0f * (1.0f - std::sqrt(fx * fx + (1 - fy) * (1 - fy)) / std::sqrt(2.0f)));
+
+		    uint32_t Pixel  = (red << 16) | (green << 8) | blue;
+			bitmap[i + WIDTH *j] = Pixel;
+        }
+    }
+}
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM w, LPARAM l) {
     if(msg == WM_DESTROY) PostQuitMessage(0);
@@ -13,15 +128,51 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
     RegisterClassW(&wc);
 
     HWND hwnd = CreateWindowExW(0, L"engine", L"DOD Engine",
-        WS_OVERLAPPEDWINDOW, 100, 100, 800, 600,
+        WS_OVERLAPPEDWINDOW, 100, 100, WIDTH, HEIGHT,
         NULL, NULL, hInstance, NULL);
 
     ShowWindow(hwnd, show);
 
+	//populate BITMAPINFO
+    BITMAPINFO info = { 0 };
+    info.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+    info.bmiHeader.biWidth = WIDTH;
+    info.bmiHeader.biHeight = -HEIGHT;
+    info.bmiHeader.biPlanes = 1;
+    info.bmiHeader.biBitCount = 32;
+    info.bmiHeader.biCompression = BI_RGB;
+    
+	
+	
+        
+    
+	//Populate_Bitmap(framebuffer);
+	Player player;
+    Init_Player(&player);
+
+	render(&player);
+
+
+
     MSG msg = {0};
-    while(GetMessageW(&msg, NULL, 0, 0)) {
-        TranslateMessage(&msg);
-        DispatchMessageW(&msg);
+    while (1) {
+        while (PeekMessageW(&msg, NULL, 0, 0, PM_REMOVE)) {
+            if (msg.message == WM_QUIT) return 0;
+            TranslateMessage(&msg);
+            DispatchMessageW(&msg);
+        }
+
+        //player.angle += 1.0f;
+        render(&player);
+
+        HDC dc = GetDC(hwnd);
+        StretchDIBits(dc, 0, 0, WIDTH, HEIGHT, 0, 0, WIDTH, HEIGHT, framebuffer, &info, DIB_RGB_COLORS, SRCCOPY);
+        ReleaseDC(hwnd, dc);
     }
+
+
+
+
+
     return 0;
 }
