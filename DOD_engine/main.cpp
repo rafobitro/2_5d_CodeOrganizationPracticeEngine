@@ -20,14 +20,14 @@ int map[16][8] = {
     {1,0,1,0,0,0,0,1},
     {1,1,1,0,0,0,0,1},
     {1,0,0,0,0,0,0,1},
-    {1,0,0,0,0,0,0,1},
+    {1,0,0,0,0,1,0,1},
+    {1,1,0,0,0,0,0,1},
+    {1,0,0,1,0,0,0,1},
+    {1,0,1,0,0,1,0,1},
+    {1,0,1,0,0,0,0,1},
+    {1,0,1,0,0,0,0,1},
     {1,1,1,0,0,0,0,1},
-    {1,0,1,0,0,0,0,1},
-    {1,0,1,0,0,0,0,1},
-    {1,0,1,0,0,0,0,1},
-    {1,0,1,0,0,0,0,1},
-    {1,1,1,0,0,0,0,1},
-    {1,0,0,0,0,0,0,1},
+    {1,0,0,0,0,1,0,1},
     {1,0,0,0,0,0,0,1},
     {1,1,1,0,0,0,0,1},
     {1,0,1,0,0,0,0,1},
@@ -42,9 +42,9 @@ struct Player {
 
 
 void Init_Player(Player* player) {
-    player->x = 40;
-    player->y = 40;
-	player->angle = 180;
+    player->x = 256;
+    player->y = 256;
+	player->angle = 90;
 
 	
 }
@@ -52,8 +52,8 @@ void Init_Player(Player* player) {
 
 void render(Player* player) {
     int distance_to_wall = 0;
-    int player_hight = 15;
-    int wall_hight = 30;
+    int player_hight = 32;
+    int wall_hight = 64;
 	int Horizontal_FOV = 90;
 	int vertical_FOV = 90;
 	float ray_x = player->x;
@@ -68,7 +68,7 @@ void render(Player* player) {
         float ray_x = player->x;
         float ray_y = player->y;
         int distance_to_wall = 0;
-        while(map[(int)ray_y/10][(int)ray_x / 10] == 0 ) {
+        while(map[(int)ray_y/64][(int)ray_x / 64] == 0 ) {
             distance_to_wall++;
             ray_x += std::cos(ray_angle * 3.14159f / 180.0f);
             ray_y += std::sin(ray_angle * 3.14159f / 180.0f);
@@ -95,10 +95,10 @@ void render(Player* player) {
                     tex_x = (int)Texture_WIDTH*(ray_x-floor(ray_x));
                 int tex_y = (int)Texture_HEIGHT * ((float)(j - ceilling_pixels)/Wall_pixels);
                     
-                framebuffer[i + WIDTH * j] = wall_texture [tex_y * Texture_WIDTH + tex_x];
+                framebuffer[i + WIDTH * j] = floor_texture [tex_y * Texture_WIDTH + tex_x];
             }
             else {
-				framebuffer[i + WIDTH * j] = 0x00FF00;
+				framebuffer[i + WIDTH * j] = 0x0000ff;
                     
                     
 			}
@@ -231,7 +231,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
 
         
 
-        player.angle += 1.0f;
+        // player.angle += 1.0f;
         render(&player);
 		
 
