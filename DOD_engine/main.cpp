@@ -2,12 +2,14 @@
 #include <cstdint>
 #include <cmath>
 
-int WIDTH = 1600;
-int HEIGHT = 900;
+int WIDTH = 800;
+int HEIGHT = 450;
+int Texture_WIDTH=64;
+int Texture_HEIGHT=64;
 uint32_t* framebuffer=(uint32_t*)malloc(4*WIDTH*HEIGHT);
-uint32_t* wall_texture = (uint32_t*)malloc(4 * WIDTH * HEIGHT);
-uint32_t* floor_texture = (uint32_t*)malloc(4 * WIDTH * HEIGHT);
-uint32_t* ciling_texture = (uint32_t*)malloc(4 * WIDTH * HEIGHT);
+uint32_t* wall_texture = (uint32_t*)malloc(4 * Texture_WIDTH * Texture_HEIGHT);
+uint32_t* floor_texture = (uint32_t*)malloc(4 * Texture_WIDTH * Texture_HEIGHT);
+uint32_t* ciling_texture = (uint32_t*)malloc(4 * Texture_WIDTH * Texture_HEIGHT);
 
 
 
@@ -82,11 +84,21 @@ void render(Player* player) {
 
             if (j < ceilling_pixels) {
                 
-				framebuffer[i + WIDTH * j] = wall_texture[(int)j % HEIGHT * WIDTH + (int)i % WIDTH]; //wall
-            } else if (j < Wall_pixels + ceilling_pixels) {
-				framebuffer[i + WIDTH * j] = floor_texture[(int)j % HEIGHT * WIDTH + (int)i % WIDTH]; //wall
-            } else {
-				framebuffer[i + WIDTH * j] = wall_texture [(int)ray_x % HEIGHT * WIDTH + (int)ray_y % WIDTH];
+                framebuffer[i + WIDTH * j] = 0xFF0000; 
+            }
+            else if (j < Wall_pixels + ceilling_pixels) {
+                //wher texture starts 
+                int tex_x;
+                if(ray_x - floor(ray_x)==0)
+                    tex_x = (int)Texture_WIDTH*(ray_y - floor(ray_y));
+                else 
+                    tex_x = (int)Texture_WIDTH*(ray_x-floor(ray_x));
+                int tex_y = (int)Texture_HEIGHT * ((float)(j - ceilling_pixels)/Wall_pixels);
+                    
+                framebuffer[i + WIDTH * j] = wall_texture [tex_y * Texture_WIDTH + tex_x];
+            }
+            else {
+				framebuffer[i + WIDTH * j] = 0x00FF00;
                     
                     
 			}
@@ -101,18 +113,18 @@ void render(Player* player) {
 
 
 void generate_horizontal_line_texture (uint32_t* bitmap) {
-    for (int i=0;i<WIDTH;i++) {
+    for (int i=0;i< Texture_WIDTH;i++) {
 		boolean line_drowing = false;
-        for (int j = 0;j < HEIGHT;j++) {
+        for (int j = 0;j < Texture_HEIGHT;j++) {
             
             if (j%10==0)
 				line_drowing = !line_drowing;
             if (line_drowing)
             {
-				bitmap[i + WIDTH * j] = 0xFF00FF00;
+				bitmap[i + Texture_WIDTH * j] = 0xFF00FF00;
             }
             else {
-                bitmap[i + WIDTH * j] = 0xFF000000;
+                bitmap[i + Texture_WIDTH * j] = 0xFF000000;
             }
 
         }
@@ -120,19 +132,19 @@ void generate_horizontal_line_texture (uint32_t* bitmap) {
 }
 
 void generate_vertical_line_texture (uint32_t* bitmap) {
-    for (int i=0;i<WIDTH;i++) {
+    for (int i=0;i<Texture_WIDTH;i++) {
         boolean line_drowing = false;
-        for (int j = 0;j < HEIGHT;j++) {
+        for (int j = 0;j < Texture_HEIGHT;j++) {
             
             if (i%10==0)
                 line_drowing = !line_drowing;
 
             if (line_drowing)
             {
-                bitmap[i + WIDTH * j] = 0xFF00FF00;
+                bitmap[i + Texture_WIDTH * j] = 0xFF00FF00;
             }
             else {
-                bitmap[i + WIDTH * j] = 0xFF000000;
+                bitmap[i + Texture_WIDTH * j] = 0xFF000000;
             }
         }
     }
@@ -140,12 +152,12 @@ void generate_vertical_line_texture (uint32_t* bitmap) {
 
 void generate_gradient_texture (uint32_t* bitmap) {
 
-    for (int i=0;i<WIDTH;i++) {
+    for (int i=0;i< Texture_WIDTH;i++) {
 
-        for (int j = 0;j < HEIGHT;j++) {
+        for (int j = 0;j < Texture_HEIGHT;j++) {
           
-            float fx = (float)i / WIDTH;
-            float fy = (float)j / HEIGHT;
+            float fx = (float)i / Texture_WIDTH;
+            float fy = (float)j / Texture_HEIGHT;
 
             uint8_t red = (uint8_t)(255.0f * (1.0f - std::sqrt(fx * fx + fy * fy) / std::sqrt(2.0f)));
             red += (uint8_t)(255.0f * (1.0f - std::sqrt((1 - fx) * (1 - fx) + (1 - fy) * (1 - fy)) / std::sqrt(2.0f)));
@@ -153,7 +165,7 @@ void generate_gradient_texture (uint32_t* bitmap) {
             uint8_t blue = (uint8_t)(255.0f * (1.0f - std::sqrt(fx * fx + (1 - fy) * (1 - fy)) / std::sqrt(2.0f)));
 
 		    uint32_t Pixel  = (red << 16) | (green << 8) | blue;
-			bitmap[i + WIDTH *j] = Pixel;
+			bitmap[i + Texture_WIDTH *j] = Pixel;
         }
     }
 }
@@ -201,7 +213,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
     Init_Player(&player);
 
     
-        generate_gradient_texture (wall_texture);
+    generate_gradient_texture (wall_texture);
 	generate_horizontal_line_texture(floor_texture);
     generate_vertical_line_texture (ciling_texture);
 	
