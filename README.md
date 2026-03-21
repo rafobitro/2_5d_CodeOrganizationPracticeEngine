@@ -3,10 +3,12 @@ i dested to learn code orgonisation becouse my code a spageti code and to learn 
 until i am not done or in normal stage my project i will not work in readme 
 curent state of engine 
 
-<img width="788" height="471" alt="image" src="https://github.com/user-attachments/assets/ffb1d9c5-b904-4b73-bbf7-21ea47c8fbbc" />
+<img width="793" height="484" alt="image" src="https://github.com/user-attachments/assets/dc7ad488-4426-47d7-a3b2-2f605aac9c95" />
 
 
-<img width="791" height="469" alt="image" src="https://github.com/user-attachments/assets/23d6d18f-4aea-446f-8996-0f4d6f3c335c" />
+
+<img width="798" height="474" alt="image" src="https://github.com/user-attachments/assets/44107f93-e07f-4a17-884d-31dea6f10857" />
+
 
 
 
