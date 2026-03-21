@@ -1,11 +1,13 @@
+#define PI 3.1415926535f
+
 #include <windows.h>
 #include <cstdint>
 #include <cmath>
 
 int WIDTH = 800;
 int HEIGHT = 450;
-int Texture_WIDTH=64;
-int Texture_HEIGHT=64;
+int Texture_WIDTH=128;
+int Texture_HEIGHT=128;
 uint32_t* framebuffer=(uint32_t*)malloc(4*WIDTH*HEIGHT);
 uint32_t* wall_texture = (uint32_t*)malloc(4 * Texture_WIDTH * Texture_HEIGHT);
 uint32_t* floor_texture = (uint32_t*)malloc(4 * Texture_WIDTH * Texture_HEIGHT);
@@ -18,7 +20,7 @@ uint32_t* ciling_texture = (uint32_t*)malloc(4 * Texture_WIDTH * Texture_HEIGHT)
 int map[16][8] = {
     {1,1,1,1,1,1,1,1},
     {1,0,1,0,0,0,0,1},
-    {1,1,1,0,0,0,0,1},
+    {1,1,1,0,1,0,0,1},
     {1,0,0,0,0,0,0,1},
     {1,0,0,0,0,1,0,1},
     {1,1,0,0,0,0,0,1},
@@ -70,8 +72,8 @@ void render(Player* player) {
         int distance_to_wall = 0;
         while(map[(int)ray_y/64][(int)ray_x / 64] == 0 ) {
             distance_to_wall++;
-            ray_x += std::cos(ray_angle * 3.14159f / 180.0f);
-            ray_y += std::sin(ray_angle * 3.14159f / 180.0f);
+            ray_x += std::cos(ray_angle * PI / 180.0f);
+            ray_y += std::sin(ray_angle * PI / 180.0f);
         }
 
 		
@@ -90,12 +92,12 @@ void render(Player* player) {
                 //wher texture starts 
                 int tex_x;
                 if(ray_x - floor(ray_x)==0)
-                    tex_x = (int)Texture_WIDTH*(ray_y - floor(ray_y));
+                    tex_x = (int)Texture_WIDTH*((ray_x - (ray_x-floor(ray_x))) / 64);
                 else 
-                    tex_x = (int)Texture_WIDTH*(ray_x-floor(ray_x));
+                    tex_x = (int)Texture_WIDTH*((ray_y - (ray_y-floor(ray_y))) / 64);
                 int tex_y = (int)Texture_HEIGHT * ((float)(j - ceilling_pixels)/Wall_pixels);
                     
-                framebuffer[i + WIDTH * j] = floor_texture [tex_y * Texture_WIDTH + tex_x];
+                framebuffer[i + WIDTH * j] = ciling_texture [tex_y * Texture_WIDTH + tex_x];
             }
             else {
 				framebuffer[i + WIDTH * j] = 0x0000FF;
@@ -132,12 +134,13 @@ void generate_horizontal_line_texture (uint32_t* bitmap) {
 }
 
 void generate_vertical_line_texture (uint32_t* bitmap) {
+    boolean line_drowing = false;
     for (int i=0;i<Texture_WIDTH;i++) {
-        boolean line_drowing = false;
+        if (i % 8 == 0)
+            line_drowing = !line_drowing;
         for (int j = 0;j < Texture_HEIGHT;j++) {
             
-            if (i%10==0)
-                line_drowing = !line_drowing;
+            
 
             if (line_drowing)
             {
@@ -163,6 +166,7 @@ void generate_gradient_texture (uint32_t* bitmap) {
             red += (uint8_t)(255.0f * (1.0f - std::sqrt((1 - fx) * (1 - fx) + (1 - fy) * (1 - fy)) / std::sqrt(2.0f)));
             uint8_t green = (uint8_t)(255.0f * (1.0f - std::sqrt((1 - fx) * (1 - fx) + fy * fy) / std::sqrt(2.0f)));
             uint8_t blue = (uint8_t)(255.0f * (1.0f - std::sqrt(fx * fx + (1 - fy) * (1 - fy)) / std::sqrt(2.0f)));
+            
 
 		    uint32_t Pixel  = (red << 16) | (green << 8) | blue;
 			bitmap[i + Texture_WIDTH *j] = Pixel;
@@ -249,8 +253,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
 		
 
         HDC dc = GetDC(hwnd);
-      //  StretchDIBits(dc, 0, 0, WIDTH, HEIGHT, 0, 0, WIDTH, HEIGHT, framebuffer, &info, DIB_RGB_COLORS, SRCCOPY);
-        StretchDIBits(dc, 0, 0, WIDTH, HEIGHT, 0, 0, Texture_WIDTH, Texture_HEIGHT, ciling_texture, &texture_info, DIB_RGB_COLORS, SRCCOPY);
+        StretchDIBits(dc, 0, 0, WIDTH, HEIGHT, 0, 0, WIDTH, HEIGHT, framebuffer, &info, DIB_RGB_COLORS, SRCCOPY);
+        //StretchDIBits(dc, 0, 0, WIDTH, HEIGHT, 0, 0, Texture_WIDTH, Texture_HEIGHT, wall_texture , &texture_info, DIB_RGB_COLORS, SRCCOPY);
 
         ReleaseDC(hwnd, dc);
     }
@@ -259,5 +263,5 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
 
 
 
-    return 0;
+    return 0; 
 }
