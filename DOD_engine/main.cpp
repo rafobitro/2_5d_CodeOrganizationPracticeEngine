@@ -76,6 +76,17 @@ void render(Player* player) {
             ray_y += std::sin(ray_angle * PI / 180.0f);
         }
 
+        bool hit_vertical_wall = false;
+
+
+        float frac_x = ray_x / 64.0f - floor(ray_x / 64.0f);
+        float frac_y = ray_y / 64.0f - floor(ray_y / 64.0f);
+
+        if (frac_x < frac_y)
+            hit_vertical_wall = true;
+        else
+            hit_vertical_wall = false;
+
 		
         int total_visable_hight = distance_to_wall * 2;
 		int Wall_pixels = HEIGHT * wall_hight / total_visable_hight;
@@ -91,13 +102,13 @@ void render(Player* player) {
             else if (j < Wall_pixels + ceilling_pixels) {
                 //wher texture starts 
                 int tex_x;
-                if(ray_x - floor(ray_x)==0)
+                if(!hit_vertical_wall)
                     tex_x = (int)Texture_WIDTH*((ray_x - (ray_x-floor(ray_x))) / 64);
                 else 
                     tex_x = (int)Texture_WIDTH*((ray_y - (ray_y-floor(ray_y))) / 64);
                 int tex_y = (int)Texture_HEIGHT * ((float)(j - ceilling_pixels)/Wall_pixels);
                     
-                framebuffer[i + WIDTH * j] = ciling_texture [tex_y * Texture_WIDTH + tex_x];
+                framebuffer[i + WIDTH * j] = ciling_texture  [tex_y * Texture_WIDTH + tex_x];
             }
             else {
 				framebuffer[i + WIDTH * j] = 0x0000FF;
