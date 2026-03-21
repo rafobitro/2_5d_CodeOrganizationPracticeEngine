@@ -98,7 +98,7 @@ void render(Player* player) {
                 framebuffer[i + WIDTH * j] = floor_texture [tex_y * Texture_WIDTH + tex_x];
             }
             else {
-				framebuffer[i + WIDTH * j] = 0x0000ff;
+				framebuffer[i + WIDTH * j] = 0x0000FF;
                     
                     
 			}
@@ -204,7 +204,20 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
     info.bmiHeader.biPlanes = 1;
     info.bmiHeader.biBitCount = 32;
     info.bmiHeader.biCompression = BI_RGB;
+
+
+
+    //populate BITMAPINFO
+    BITMAPINFO texture_info = { 0 };
+    texture_info.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+    texture_info.bmiHeader.biWidth = Texture_WIDTH;
+    texture_info.bmiHeader.biHeight = -Texture_HEIGHT;
+    texture_info.bmiHeader.biPlanes = 1;
+    texture_info.bmiHeader.biBitCount = 32;
+    texture_info.bmiHeader.biCompression = BI_RGB;
     
+
+
 	
 	
         
@@ -236,7 +249,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
 		
 
         HDC dc = GetDC(hwnd);
-        StretchDIBits(dc, 0, 0, WIDTH, HEIGHT, 0, 0, WIDTH, HEIGHT, framebuffer, &info, DIB_RGB_COLORS, SRCCOPY);
+      //  StretchDIBits(dc, 0, 0, WIDTH, HEIGHT, 0, 0, WIDTH, HEIGHT, framebuffer, &info, DIB_RGB_COLORS, SRCCOPY);
+        StretchDIBits(dc, 0, 0, WIDTH, HEIGHT, 0, 0, Texture_WIDTH, Texture_HEIGHT, ciling_texture, &texture_info, DIB_RGB_COLORS, SRCCOPY);
+
         ReleaseDC(hwnd, dc);
     }
 
