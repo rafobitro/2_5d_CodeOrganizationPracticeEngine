@@ -50,7 +50,7 @@ struct Player {
 void init_Player(Player& player) {
     player.x = 4* GRID_SIZE;
     player.y = 4* GRID_SIZE;
-	player.angle = 90;
+	player.angle = 90.1;
 }
 
 struct Game_state {
@@ -75,6 +75,8 @@ struct Game_state {
        {1,0,1,0,0,0,0,1},
        {1,1,1,1,1,1,1,1},
     };
+    float player_speed = 0.9f;
+
 
 };
 
@@ -258,7 +260,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
     init_Textures(state.textures);
     state.framebuffer=(uint32_t*)malloc(4 * RENDER_W * RENDER_H);
    
-
+    float player_x_change = 0, player_y_change = 0;
     MSG msg = {0};
     while (1) {
         while (PeekMessageW(&msg, NULL, 0, 0, PM_REMOVE)) {
@@ -268,31 +270,46 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
         }
 
         
-        float player_x_change = 0, player_y_change = 0;
+        player_x_change = 0, 
+        player_y_change = 0;
 
-        if (GetAsyncKeyState('Q') & 0x8000) state.player.angle -= 1.0f;
-        if (GetAsyncKeyState('E') & 0x8000) state.player.angle += 1.0f;
+
+        if (GetAsyncKeyState('Q') & 0x8000) state.player.angle -= 0.5f;
+        if (GetAsyncKeyState('E') & 0x8000) state.player.angle += 0.5f;
         if (GetAsyncKeyState('W') & 0x8000) {
-            player_x_change += std::cos(state.player.angle * PI / 180.0f) * 1.0f;
-            player_y_change += std::sin(state.player.angle * PI / 180.0f) * 1.0f;
+            player_x_change += std::cos(state.player.angle * PI / 180.0f) * state.player_speed;
+            player_y_change += std::sin(state.player.angle * PI / 180.0f) * state.player_speed;
         }
         if (GetAsyncKeyState('S') & 0x8000) {
-            player_x_change -= std::cos(state.player.angle * PI / 180.0f) * 1.0f;
-            player_y_change -= std::sin(state.player.angle * PI / 180.0f) * 1.0f;
+            player_x_change -= std::cos(state.player.angle * PI / 180.0f) * state.player_speed;
+            player_y_change -= std::sin(state.player.angle * PI / 180.0f) * state.player_speed;
         }
         if (GetAsyncKeyState('D') & 0x8000) {
-            player_x_change += std::cos((state.player.angle+90) * PI / 180.0f) * 1.0f;
-            player_y_change += std::sin((state.player.angle+90) * PI / 180.0f) * 1.0f;
+            player_x_change += std::cos((state.player.angle+90) * PI / 180.0f) * state.player_speed;
+            player_y_change += std::sin((state.player.angle+90) * PI / 180.0f) * state.player_speed;
         }
         if (GetAsyncKeyState('A') & 0x8000) {
-            player_x_change -= std::cos((state.player.angle + 90) * PI / 180.0f) * 1.0f;
-            player_y_change -= std::sin((state.player.angle + 90) * PI / 180.0f) * 1.0f;
+            player_x_change -= std::cos((state.player.angle + 90) * PI / 180.0f) * state.player_speed;
+            player_y_change -= std::sin((state.player.angle + 90) * PI / 180.0f) * state.player_speed;
         }
         
-        if (state.map[(int)(state.player.y+player_y_change) / GRID_SIZE][(int)(state.player.x + player_x_change) / GRID_SIZE] == 0) {
+        if (state.map[(int)(state.player.y + player_y_change) / GRID_SIZE][(int)(state.player.x + player_x_change) / GRID_SIZE] == 0) {
             state.player.x += player_x_change;
             state.player.y += player_y_change;
         }
+        else {
+            // when 
+            player_x_change/=4;
+            player_y_change /= 4;
+
+            if (state.map[(int)(state.player.y) / GRID_SIZE][(int)(state.player.x + player_x_change) / GRID_SIZE] == 0) {
+                state.player.x += player_x_change;
+            }
+            if (state.map[(int)(state.player.y + player_y_change) / GRID_SIZE][(int)(state.player.x) / GRID_SIZE] == 0) {
+                state.player.y += player_y_change;
+            }
+        }
+        
 
        
 
