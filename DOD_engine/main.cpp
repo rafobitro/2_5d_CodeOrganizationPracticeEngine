@@ -1,11 +1,11 @@
 #define PI 3.1415926535f
-#define MAP_W 8
-#define MAP_H 16
 #define GRID_SIZE 64
 #define TEXTURE_SIZE 64
 //16 by 9 ratio
 #define RENDER_W 800
 #define RENDER_H 450
+#define MAP_W 8
+#define MAP_H 16
 #define VERTICAL_FOV 90
 #define HORIZONTAL_FOV 90
 
@@ -15,31 +15,31 @@
 #include <cmath>
 
 
-uint32_t* framebuffer=(uint32_t*)malloc(4*RENDER_W*RENDER_H);
-uint32_t* gradient_texture = (uint32_t*)malloc(4 * TEXTURE_SIZE * TEXTURE_SIZE);
-uint32_t* vertical_line_texture = (uint32_t*)malloc(4 * TEXTURE_SIZE* TEXTURE_SIZE);
-uint32_t* horizontal_line_texture = (uint32_t*)malloc(4 * TEXTURE_SIZE* TEXTURE_SIZE);
-uint32_t* grid_line_texture = (uint32_t*)malloc(4 * TEXTURE_SIZE * TEXTURE_SIZE);
 
 
-int map[16][8] = {
-    {1,1,1,1,1,1,1,1},
-    {1,0,1,0,0,0,0,1},
-    {1,1,1,0,1,0,0,1},
-    {1,0,0,0,0,0,0,1},
-    {1,0,0,0,0,1,0,1},
-    {1,1,0,0,0,0,0,1},
-    {1,0,0,1,0,0,0,1},
-    {1,0,1,0,0,1,0,1},
-    {1,0,1,0,0,0,0,1},
-    {1,0,1,0,0,0,0,1},
-    {1,1,1,0,0,0,0,1},
-    {1,0,0,0,0,1,0,1},
-    {1,0,0,0,0,0,0,1},
-    {1,1,1,0,0,0,0,1},
-    {1,0,1,0,0,0,0,1},
-    {1,1,1,1,1,1,1,1},
+
+struct Textures {
+    uint32_t* gradient;
+    uint32_t* vertical_lines;
+    uint32_t* horizontal_lines;
+    uint32_t* grid_lines;
 };
+
+
+void generate_gradient_texture(uint32_t* bitmap);
+void generate_horizontal_line_texture(uint32_t* bitmap);
+void generate_vertical_line_texture(uint32_t* bitmap);
+
+void init_Textures(Textures& Textures) {
+
+    Textures.gradient = (uint32_t*)malloc(4 * TEXTURE_SIZE * TEXTURE_SIZE);
+    Textures.vertical_lines = (uint32_t*)malloc(4 * TEXTURE_SIZE * TEXTURE_SIZE);
+    Textures.horizontal_lines = (uint32_t*)malloc(4 * TEXTURE_SIZE * TEXTURE_SIZE);
+
+    generate_gradient_texture(Textures.gradient);
+    generate_horizontal_line_texture(Textures.horizontal_lines);
+    generate_vertical_line_texture(Textures.vertical_lines);
+}
 
 struct Player {
     int x, y;
@@ -47,15 +47,43 @@ struct Player {
 };
 
 
-void Init_Player(Player* player) {
-    player->x = 4* GRID_SIZE;
-    player->y = 4* GRID_SIZE;
-	player->angle = 90;
+void init_Player(Player& player) {
+    player.x = 4* GRID_SIZE;
+    player.y = 4* GRID_SIZE;
+	player.angle = 90;
 }
 
+struct Game_state {
+    Player player;
+    Textures textures;
+    uint32_t* framebuffer;
+    int map[MAP_H][MAP_W]= {
+       {1,1,1,1,1,1,1,1},
+       {1,0,1,0,0,0,0,1},
+       {1,1,1,0,1,0,0,1},
+       {1,0,0,0,0,0,0,1},
+       {1,0,0,0,0,1,0,1},
+       {1,1,0,0,0,0,0,1},
+       {1,0,0,1,0,0,0,1},
+       {1,0,1,0,0,1,0,1},
+       {1,0,1,0,0,0,0,1},
+       {1,0,1,0,0,0,0,1},
+       {1,1,1,0,0,0,0,1},
+       {1,0,0,0,0,1,0,1},
+       {1,0,0,0,0,0,0,1},
+       {1,1,1,0,0,0,0,1},
+       {1,0,1,0,0,0,0,1},
+       {1,1,1,1,1,1,1,1},
+    };
 
-void render(Player* player) {
-    float ray_angle  = (player->angle - HORIZONTAL_FOV / 2.0f);
+};
+
+
+
+
+
+void render(Game_state& state) {
+    float ray_angle  = (state.player.angle - HORIZONTAL_FOV / 2.0f);
     float angle_step = (1.0f / RENDER_W) * HORIZONTAL_FOV;
     float ray_x, ray_y;
     int distance_to_wall;
@@ -64,12 +92,12 @@ void render(Player* player) {
 
     for (int i = 0;i < RENDER_W;i++) {
         ray_angle += angle_step;
-        ray_x = player->x;
-        ray_y = player->y;
+        ray_x = state.player.x;
+        ray_y = state.player.y;
         distance_to_wall = 0;
         hit_vertical_wall = false;
 
-        while (map[(int)ray_y / GRID_SIZE][(int)ray_x / GRID_SIZE] == 0) {
+        while (state.map[(int)ray_y / GRID_SIZE][(int)ray_x / GRID_SIZE] == 0) {
             distance_to_wall++;
             float next_x = ray_x + std::cos(ray_angle * PI / 180.0f);
             float next_y = ray_y + std::sin(ray_angle * PI / 180.0f);
@@ -101,7 +129,7 @@ void render(Player* player) {
 
             if (j < ceilling_pixels) {
                 
-                framebuffer[i + RENDER_W * j] = 0xFF0000;
+                state.framebuffer[i + RENDER_W * j] = 0xFF0000;
             }
             else if (j < Wall_pixels + ceilling_pixels) {
                  
@@ -112,10 +140,10 @@ void render(Player* player) {
 
                 
                     
-                framebuffer[i + RENDER_W * j] = vertical_line_texture[tex_y * TEXTURE_SIZE + tex_x] ;
+                state.framebuffer[i + RENDER_W * j] = state.textures.gradient [tex_y * TEXTURE_SIZE + tex_x] ;
             }
             else {
-				framebuffer[i + RENDER_W * j] = 0x0000FF;
+                state.framebuffer[i + RENDER_W * j] = 0x0000FF;
                     
                     
 			}
@@ -213,7 +241,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
     info.bmiHeader.biCompression = BI_RGB;
 
 
-
     //populate BITMAPINFO
     BITMAPINFO texture_info = { 0 };
     texture_info.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
@@ -223,23 +250,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
     texture_info.bmiHeader.biBitCount = 32;
     texture_info.bmiHeader.biCompression = BI_RGB;
     
-
-
-	
-	
         
-    
-	Player player;
-    Init_Player(&player);
+    Game_state state;
 
-    
-    generate_gradient_texture (gradient_texture);
-	generate_horizontal_line_texture(horizontal_line_texture);
-    generate_vertical_line_texture (vertical_line_texture );
-	
-	//generate_vertical_line_texture(framebuffer);
-    //generate_horizontal_line_texture(framebuffer);
-   //generate_gradient_texture(framebuffer);
+  
+    init_Player(state.player);
+    init_Textures(state.textures);
+    state.framebuffer=(uint32_t*)malloc(4 * RENDER_W * RENDER_H);
+   
 
     MSG msg = {0};
     while (1) {
@@ -252,12 +270,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
         
 
         // player.angle += 1.0f;
-        render(&player);
+        render(state);
 		
 
         HDC dc = GetDC(hwnd);
-          StretchDIBits(dc, 0, 0, RENDER_W, RENDER_H, 0, 0, RENDER_W, RENDER_H, framebuffer, &info, DIB_RGB_COLORS, SRCCOPY);
-        //StretchDIBits(dc, 0, 0, RENDER_W, RENDER_H, 0, 0, TEXTURE_SIZE, TEXTURE_SIZE, vertical_line_texture, &texture_info, DIB_RGB_COLORS, SRCCOPY);
+        //  StretchDIBits(dc, 0, 0, RENDER_W, RENDER_H, 0, 0, RENDER_W, RENDER_H, state.framebuffer, &info, DIB_RGB_COLORS, SRCCOPY);
+          StretchDIBits(dc, 0, 0, RENDER_W, RENDER_H, 0, 0, TEXTURE_SIZE, TEXTURE_SIZE, state.textures.vertical_lines, &texture_info, DIB_RGB_COLORS, SRCCOPY);
 
         ReleaseDC(hwnd, dc);
     }
