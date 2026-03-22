@@ -29,16 +29,19 @@ struct Textures {
 void generate_gradient_texture(uint32_t* bitmap);
 void generate_horizontal_line_texture(uint32_t* bitmap);
 void generate_vertical_line_texture(uint32_t* bitmap);
+void generate_grid_line_texture(uint32_t* bitmap);
 
 void init_Textures(Textures& Textures) {
 
     Textures.gradient = (uint32_t*)malloc(4 * TEXTURE_SIZE * TEXTURE_SIZE);
     Textures.vertical_lines = (uint32_t*)malloc(4 * TEXTURE_SIZE * TEXTURE_SIZE);
     Textures.horizontal_lines = (uint32_t*)malloc(4 * TEXTURE_SIZE * TEXTURE_SIZE);
+    Textures.grid_lines = (uint32_t*)malloc(4 * TEXTURE_SIZE * TEXTURE_SIZE);
 
     generate_gradient_texture(Textures.gradient);
     generate_horizontal_line_texture(Textures.horizontal_lines);
     generate_vertical_line_texture(Textures.vertical_lines);
+    generate_grid_line_texture(Textures.grid_lines);
 }
 
 struct Player {
@@ -142,7 +145,7 @@ void render(Game_state& state) {
 
                 
                     
-                state.framebuffer[i + RENDER_W * j] = state.textures.gradient [tex_y * TEXTURE_SIZE + tex_x] ;
+                state.framebuffer[i + RENDER_W * j] = state.textures.grid_lines [tex_y * TEXTURE_SIZE + tex_x] ;
             }
             else {
                 state.framebuffer[i + RENDER_W * j] = 0x0000FF;
@@ -163,7 +166,7 @@ void generate_horizontal_line_texture (uint32_t* bitmap) {
 		boolean line_drowing = false;
         for (int j = 0;j < TEXTURE_SIZE;j++) {
             
-            if (j%10==0)
+            if (j%4==0)
 				line_drowing = !line_drowing;
             if (line_drowing)
 				bitmap[i + TEXTURE_SIZE * j] = 0xFF00FF00;
@@ -177,7 +180,7 @@ void generate_horizontal_line_texture (uint32_t* bitmap) {
 void generate_vertical_line_texture (uint32_t* bitmap) {
     boolean line_drowing = false;
     for (int i=0;i< TEXTURE_SIZE;i++) {
-        if (i % 8 == 0)
+        if (i % 4 == 0)
             line_drowing = !line_drowing;
         for (int j = 0;j < TEXTURE_SIZE;j++) {
             
@@ -186,6 +189,36 @@ void generate_vertical_line_texture (uint32_t* bitmap) {
             else 
                 bitmap[i + TEXTURE_SIZE * j] = 0xFF000000;
         }
+    }
+}
+
+void generate_grid_line_texture(uint32_t* bitmap) {
+    boolean vertical_line = false;
+    boolean horizontal_line = false;
+    for (int i = 0;i < TEXTURE_SIZE;i++) {
+        if (i % 4 == 0)
+            vertical_line = !vertical_line;
+        for (int j = 0;j < TEXTURE_SIZE;j++) {
+
+
+            if (j % 8 == 0)
+                horizontal_line = !horizontal_line;
+
+            if (vertical_line || horizontal_line)
+                bitmap[i + TEXTURE_SIZE * j] = 0xFF000000;
+            else
+                bitmap[i + TEXTURE_SIZE * j] = 0xFF00FF00 ;
+        
+            
+            
+            
+
+        
+        }
+
+        
+
+
     }
 }
 
@@ -323,7 +356,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
 
         HDC dc = GetDC(hwnd);
           StretchDIBits(dc, 0, 0, RENDER_W, RENDER_H, 0, 0, RENDER_W, RENDER_H, state.framebuffer, &info, DIB_RGB_COLORS, SRCCOPY);
-        //  StretchDIBits(dc, 0, 0, RENDER_W, RENDER_H, 0, 0, TEXTURE_SIZE, TEXTURE_SIZE, state.textures.vertical_lines, &texture_info, DIB_RGB_COLORS, SRCCOPY);
+         // StretchDIBits(dc, 0, 0, RENDER_W, RENDER_H, 0, 0, TEXTURE_SIZE, TEXTURE_SIZE, state.textures.horizontal_lines, &texture_info, DIB_RGB_COLORS, SRCCOPY);
 
         ReleaseDC(hwnd, dc);
     }
