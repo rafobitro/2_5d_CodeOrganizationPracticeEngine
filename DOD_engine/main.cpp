@@ -42,7 +42,7 @@ void init_Textures(Textures& Textures) {
 }
 
 struct Player {
-    int x, y;
+    float x, y;
     float angle;
 };
 
@@ -268,14 +268,45 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
         }
 
         
+        float player_x_change = 0, player_y_change = 0;
+
+        if (GetAsyncKeyState('Q') & 0x8000) state.player.angle -= 1.0f;
+        if (GetAsyncKeyState('E') & 0x8000) state.player.angle += 1.0f;
+        if (GetAsyncKeyState('W') & 0x8000) {
+            player_x_change += std::cos(state.player.angle * PI / 180.0f) * 1.0f;
+            player_y_change += std::sin(state.player.angle * PI / 180.0f) * 1.0f;
+        }
+        if (GetAsyncKeyState('S') & 0x8000) {
+            player_x_change -= std::cos(state.player.angle * PI / 180.0f) * 1.0f;
+            player_y_change -= std::sin(state.player.angle * PI / 180.0f) * 1.0f;
+        }
+        if (GetAsyncKeyState('D') & 0x8000) {
+            player_x_change += std::cos((state.player.angle+90) * PI / 180.0f) * 1.0f;
+            player_y_change += std::sin((state.player.angle+90) * PI / 180.0f) * 1.0f;
+        }
+        if (GetAsyncKeyState('A') & 0x8000) {
+            player_x_change -= std::cos((state.player.angle + 90) * PI / 180.0f) * 1.0f;
+            player_y_change -= std::sin((state.player.angle + 90) * PI / 180.0f) * 1.0f;
+        }
+        
+        if (state.map[(int)(state.player.y+player_y_change) / GRID_SIZE][(int)(state.player.x + player_x_change) / GRID_SIZE] == 0) {
+            state.player.x += player_x_change;
+            state.player.y += player_y_change;
+        }
+
+       
+
+
+
+
 
         // player.angle += 1.0f;
         render(state);
 		
 
         HDC dc = GetDC(hwnd);
-        //  StretchDIBits(dc, 0, 0, RENDER_W, RENDER_H, 0, 0, RENDER_W, RENDER_H, state.framebuffer, &info, DIB_RGB_COLORS, SRCCOPY);
-          StretchDIBits(dc, 0, 0, RENDER_W, RENDER_H, 0, 0, TEXTURE_SIZE, TEXTURE_SIZE, state.textures.vertical_lines, &texture_info, DIB_RGB_COLORS, SRCCOPY);
+          StretchDIBits(dc, 0, 0, RENDER_W, RENDER_H, 0, 0, RENDER_W, RENDER_H, state.framebuffer, &info, DIB_RGB_COLORS, SRCCOPY);
+        //  StretchDIBits(dc, 0, 0, RENDER_W, RENDER_H, 0, 0, TEXTURE_SIZE, TEXTURE_SIZE, state.textures.vertical_lines, &texture_info, DIB_RGB_COLORS, SRCCOPY);
 
         ReleaseDC(hwnd, dc);
     }
