@@ -1,20 +1,25 @@
 #define PI 3.1415926535f
+#define MAP_W 8
+#define MAP_H 16
+#define GRID_SIZE 64
+#define TEXTURE_SIZE 64
+//16 by 9 ratio
+#define RENDER_W 800
+#define RENDER_H 450
+#define VERTICAL_FOV 90
+#define HORIZONTAL_FOV 90
+
 
 #include <windows.h>
 #include <cstdint>
 #include <cmath>
 
-int WIDTH = 800;
-int HEIGHT = 450;
-int Texture_WIDTH=128;
-int Texture_HEIGHT=128;
-uint32_t* framebuffer=(uint32_t*)malloc(4*WIDTH*HEIGHT);
-uint32_t* wall_texture = (uint32_t*)malloc(4 * Texture_WIDTH * Texture_HEIGHT);
-uint32_t* floor_texture = (uint32_t*)malloc(4 * Texture_WIDTH * Texture_HEIGHT);
-uint32_t* ciling_texture = (uint32_t*)malloc(4 * Texture_WIDTH * Texture_HEIGHT);
 
-
-
+uint32_t* framebuffer=(uint32_t*)malloc(4*RENDER_W*RENDER_H);
+uint32_t* gradient_texture = (uint32_t*)malloc(4 * TEXTURE_SIZE * TEXTURE_SIZE);
+uint32_t* vertical_line_texture = (uint32_t*)malloc(4 * TEXTURE_SIZE* TEXTURE_SIZE);
+uint32_t* horizontal_line_texture = (uint32_t*)malloc(4 * TEXTURE_SIZE* TEXTURE_SIZE);
+uint32_t* grid_line_texture = (uint32_t*)malloc(4 * TEXTURE_SIZE * TEXTURE_SIZE);
 
 
 int map[16][8] = {
@@ -42,75 +47,75 @@ struct Player {
 };
 
 
-
 void Init_Player(Player* player) {
-    player->x = 256;
-    player->y = 256;
+    player->x = 4* GRID_SIZE;
+    player->y = 4* GRID_SIZE;
 	player->angle = 90;
-
-	
 }
 
 
 void render(Player* player) {
-    int distance_to_wall = 0;
-    int player_hight = 32;
-    int wall_hight = 64;
-	int Horizontal_FOV = 90;
-	int vertical_FOV = 90;
-	float ray_x = player->x;
-	float ray_y = player->y;
-    float ray_angle  = (player->angle - Horizontal_FOV / 2.0f);
-	
-  
-    //reycast rays to find walls 
+    float ray_angle  = (player->angle - HORIZONTAL_FOV / 2.0f);
+    float angle_step = (1.0f / RENDER_W) * HORIZONTAL_FOV;
+    float ray_x, ray_y;
+    int distance_to_wall;
+    bool hit_vertical_wall;
+    //raycaster
 
-    for (int i = 0;i < WIDTH;i++) {
-		ray_angle += (1.0f / WIDTH) * Horizontal_FOV;
-        float ray_x = player->x;
-        float ray_y = player->y;
-        int distance_to_wall = 0;
-        bool hit_vertical = false;
+    for (int i = 0;i < RENDER_W;i++) {
+        ray_angle += angle_step;
+        ray_x = player->x;
+        ray_y = player->y;
+        distance_to_wall = 0;
+        hit_vertical_wall = false;
 
-        while (map[(int)ray_y / 64][(int)ray_x / 64] == 0) {
+        while (map[(int)ray_y / GRID_SIZE][(int)ray_x / GRID_SIZE] == 0) {
+            distance_to_wall++;
             float next_x = ray_x + std::cos(ray_angle * PI / 180.0f);
             float next_y = ray_y + std::sin(ray_angle * PI / 180.0f);
 
-            // check if crossing a vertical grid line (x boundary)
-            if ((int)next_x / 64 != (int)ray_x / 64)
-                hit_vertical = true;
-            else if ((int)next_y / 64 != (int)ray_y / 64)
-                hit_vertical = false;
+            if ((int)next_x / GRID_SIZE != (int)ray_x / GRID_SIZE)
+                hit_vertical_wall = true;
+            else if ((int)next_y / GRID_SIZE != (int)ray_y / GRID_SIZE)
+                hit_vertical_wall = false;
 
             ray_x = next_x;
             ray_y = next_y;
-            distance_to_wall++;
         }
 		
-        int total_visable_hight = distance_to_wall * 2;
-		int Wall_pixels = HEIGHT * wall_hight / total_visable_hight;
-        int flor_pixels = (HEIGHT /2) - (Wall_pixels/2 );
-        int ceilling_pixels = flor_pixels;
+        int total_visable_hight = distance_to_wall * std::tan((VERTICAL_FOV/2)*PI/180.f);
+		int Wall_pixels = RENDER_H * GRID_SIZE / total_visable_hight;
+        int ceilling_pixels = (RENDER_H / 2) - (Wall_pixels / 2 );
+        
 
-        for (int j = 0;j < HEIGHT; j++) {
+
+        int tex_x,tex_y;
+        
+        if (!hit_vertical_wall)
+            tex_x = (int)TEXTURE_SIZE * ((ray_x / GRID_SIZE) - floor((ray_x / GRID_SIZE)));
+        else
+            tex_x = (int)TEXTURE_SIZE * ((ray_y/GRID_SIZE) - floor((ray_y / GRID_SIZE)));
+
+
+        for (int j = 0;j < RENDER_H; j++) {
 
             if (j < ceilling_pixels) {
                 
-                framebuffer[i + WIDTH * j] = 0xFF0000; 
+                framebuffer[i + RENDER_W * j] = 0xFF0000;
             }
             else if (j < Wall_pixels + ceilling_pixels) {
-                //wher texture starts 
-                int tex_x;
-                if(!hit_vertical)
-                    tex_x = (int)Texture_WIDTH*((ray_x - (ray_x-floor(ray_x))) / 64);
-                else 
-                    tex_x = (int)Texture_WIDTH*((ray_y - (ray_y-floor(ray_y))) / 64);
-                int tex_y = (int)Texture_HEIGHT * ((float)(j - ceilling_pixels)/Wall_pixels);
+                 
+                //texture start
+
+                
+                tex_y = (int)TEXTURE_SIZE * (((float)(j - ceilling_pixels))/ (float)Wall_pixels);
+
+                
                     
-                framebuffer[i + WIDTH * j] = floor_texture  [tex_y * Texture_WIDTH + tex_x];
+                framebuffer[i + RENDER_W * j] = vertical_line_texture[tex_y * TEXTURE_SIZE + tex_x] ;
             }
             else {
-				framebuffer[i + WIDTH * j] = 0x0000FF;
+				framebuffer[i + RENDER_W * j] = 0x0000FF;
                     
                     
 			}
@@ -123,54 +128,44 @@ void render(Player* player) {
 }
 
 
-
 void generate_horizontal_line_texture (uint32_t* bitmap) {
-    for (int i=0;i< Texture_WIDTH;i++) {
+    for (int i=0;i< TEXTURE_SIZE;i++) {
 		boolean line_drowing = false;
-        for (int j = 0;j < Texture_HEIGHT;j++) {
+        for (int j = 0;j < TEXTURE_SIZE;j++) {
             
             if (j%10==0)
 				line_drowing = !line_drowing;
             if (line_drowing)
-            {
-				bitmap[i + Texture_WIDTH * j] = 0xFF00FF00;
-            }
-            else {
-                bitmap[i + Texture_WIDTH * j] = 0xFF000000;
-            }
-
+				bitmap[i + TEXTURE_SIZE * j] = 0xFF00FF00;
+            else 
+                bitmap[i + TEXTURE_SIZE * j] = 0xFF000000;
         }
     }
 }
 
+
 void generate_vertical_line_texture (uint32_t* bitmap) {
     boolean line_drowing = false;
-    for (int i=0;i<Texture_WIDTH;i++) {
+    for (int i=0;i< TEXTURE_SIZE;i++) {
         if (i % 8 == 0)
             line_drowing = !line_drowing;
-        for (int j = 0;j < Texture_HEIGHT;j++) {
+        for (int j = 0;j < TEXTURE_SIZE;j++) {
             
-            
-
             if (line_drowing)
-            {
-                bitmap[i + Texture_WIDTH * j] = 0xFF00FF00;
-            }
-            else {
-                bitmap[i + Texture_WIDTH * j] = 0xFF000000;
-            }
+                bitmap[i + TEXTURE_SIZE * j] = 0xFF00FF00;
+            else 
+                bitmap[i + TEXTURE_SIZE * j] = 0xFF000000;
         }
     }
 }
 
 void generate_gradient_texture (uint32_t* bitmap) {
 
-    for (int i=0;i< Texture_WIDTH;i++) {
-
-        for (int j = 0;j < Texture_HEIGHT;j++) {
+    for (int i=0;i< TEXTURE_SIZE;i++) {
+        for (int j = 0;j < TEXTURE_SIZE;j++) {
           
-            float fx = (float)i / Texture_WIDTH;
-            float fy = (float)j / Texture_HEIGHT;
+            float fx = (float)i / TEXTURE_SIZE;
+            float fy = (float)j / TEXTURE_SIZE;
 
             uint8_t red = (uint8_t)(255.0f * (1.0f - std::sqrt(fx * fx + fy * fy) / std::sqrt(2.0f)));
             red += (uint8_t)(255.0f * (1.0f - std::sqrt((1 - fx) * (1 - fx) + (1 - fy) * (1 - fy)) / std::sqrt(2.0f)));
@@ -179,12 +174,10 @@ void generate_gradient_texture (uint32_t* bitmap) {
             
 
 		    uint32_t Pixel  = (red << 16) | (green << 8) | blue;
-			bitmap[i + Texture_WIDTH *j] = Pixel;
+			bitmap[i + TEXTURE_SIZE *j] = Pixel;
         }
     }
 }
-
-
 
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM w, LPARAM l) {
@@ -199,7 +192,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
     wc.lpszClassName = L"engine";
     RegisterClassW(&wc);
 
-    RECT rect = { 0, 0, WIDTH, HEIGHT };
+    RECT rect = { 0, 0, RENDER_W , RENDER_H };
     AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, FALSE);
 
     HWND hwnd = CreateWindowExW(0, L"engine", L"DOD Engine",
@@ -213,8 +206,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
 	//populate BITMAPINFO
     BITMAPINFO info = { 0 };
     info.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-    info.bmiHeader.biWidth = WIDTH;
-    info.bmiHeader.biHeight = -HEIGHT;
+    info.bmiHeader.biWidth = RENDER_W;
+    info.bmiHeader.biHeight = -RENDER_H;
     info.bmiHeader.biPlanes = 1;
     info.bmiHeader.biBitCount = 32;
     info.bmiHeader.biCompression = BI_RGB;
@@ -224,8 +217,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
     //populate BITMAPINFO
     BITMAPINFO texture_info = { 0 };
     texture_info.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-    texture_info.bmiHeader.biWidth = Texture_WIDTH;
-    texture_info.bmiHeader.biHeight = -Texture_HEIGHT;
+    texture_info.bmiHeader.biWidth = TEXTURE_SIZE;
+    texture_info.bmiHeader.biHeight = -TEXTURE_SIZE;
     texture_info.bmiHeader.biPlanes = 1;
     texture_info.bmiHeader.biBitCount = 32;
     texture_info.bmiHeader.biCompression = BI_RGB;
@@ -240,9 +233,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
     Init_Player(&player);
 
     
-    generate_gradient_texture (wall_texture);
-	generate_horizontal_line_texture(floor_texture);
-    generate_vertical_line_texture (ciling_texture);
+    generate_gradient_texture (gradient_texture);
+	generate_horizontal_line_texture(horizontal_line_texture);
+    generate_vertical_line_texture (vertical_line_texture );
 	
 	//generate_vertical_line_texture(framebuffer);
     //generate_horizontal_line_texture(framebuffer);
@@ -263,8 +256,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
 		
 
         HDC dc = GetDC(hwnd);
-        StretchDIBits(dc, 0, 0, WIDTH, HEIGHT, 0, 0, WIDTH, HEIGHT, framebuffer, &info, DIB_RGB_COLORS, SRCCOPY);
-        //StretchDIBits(dc, 0, 0, WIDTH, HEIGHT, 0, 0, Texture_WIDTH, Texture_HEIGHT, wall_texture , &texture_info, DIB_RGB_COLORS, SRCCOPY);
+          StretchDIBits(dc, 0, 0, RENDER_W, RENDER_H, 0, 0, RENDER_W, RENDER_H, framebuffer, &info, DIB_RGB_COLORS, SRCCOPY);
+        //StretchDIBits(dc, 0, 0, RENDER_W, RENDER_H, 0, 0, TEXTURE_SIZE, TEXTURE_SIZE, vertical_line_texture, &texture_info, DIB_RGB_COLORS, SRCCOPY);
 
         ReleaseDC(hwnd, dc);
     }
