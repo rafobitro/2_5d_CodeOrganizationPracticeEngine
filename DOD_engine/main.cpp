@@ -133,10 +133,19 @@ void render(Game_state& state) {
         for (int j = 0;j < RENDER_H; j++) {
             float fade = 1.0f-(distance_to_wall/500.0f);
             if (fade < 0) fade = 0;
-            
+
+            float horizon = RENDER_H / 2.0f;
+            float distance;
+
 
             if (j < ceilling_pixels) {
-                
+
+                distance = (GRID_SIZE * horizon) / (horizon - j);
+
+                fade = 1.0f - (distance / 500.0f);
+                if (fade < 0) fade = 0;
+
+
                 uint32_t pixel = 0xFF0000;
                 uint8_t r = (pixel >> 16) & 0xFF;
                 uint8_t g = (pixel >> 8) & 0xFF;
@@ -158,7 +167,7 @@ void render(Game_state& state) {
 
                 
                     
-                uint32_t pixel = state.textures.grid_lines[tex_y * TEXTURE_SIZE + tex_x];
+                uint32_t pixel = state.textures.gradient[tex_y * TEXTURE_SIZE + tex_x];
                 uint8_t r = (pixel >> 16) & 0xFF;
                 uint8_t g = (pixel >> 8) & 0xFF;
                 uint8_t b = pixel & 0xFF;
@@ -172,6 +181,13 @@ void render(Game_state& state) {
 
             }
             else {
+              
+                distance = (GRID_SIZE * horizon) / (j - horizon);
+
+                fade = 1.0f - (distance / 500.0f);
+                if (fade < 0) fade = 0;
+
+
                 uint32_t pixel = 0x0000FF;
                 uint8_t r = (pixel >> 16) & 0xFF;
                 uint8_t g = (pixel >> 8) & 0xFF;
@@ -179,7 +195,7 @@ void render(Game_state& state) {
 
                 r = (uint8_t)r * fade;
                 g = (uint8_t)g * fade;
-                b = (uint8_t)b * fade;
+                b = (uint8_t)b *= fade ;
 
 
                 state.framebuffer[i + RENDER_W * j] = r << 16 | g << 8 | b;
