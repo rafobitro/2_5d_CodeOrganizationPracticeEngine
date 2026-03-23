@@ -131,24 +131,59 @@ void render(Game_state& state) {
 
 
         for (int j = 0;j < RENDER_H; j++) {
+            float fade = 1.0f-(distance_to_wall/500.0f);
+            if (fade < 0) fade = 0;
+            
 
             if (j < ceilling_pixels) {
                 
-                state.framebuffer[i + RENDER_W * j] = 0xFF0000;
+                uint32_t pixel = 0xFF0000;
+                uint8_t r = (pixel >> 16) & 0xFF;
+                uint8_t g = (pixel >> 8) & 0xFF;
+                uint8_t b = pixel & 0xFF;
+
+                r = (uint8_t)r * fade;
+                g = (uint8_t)g * fade;
+                b = (uint8_t)b * fade;
+
+
+                state.framebuffer[i + RENDER_W * j] = r << 16 | g << 8 | b;
+
+      
             }
             else if (j < Wall_pixels + ceilling_pixels) {
                  
-                //texture start
-
                 
-                tex_y = (int)TEXTURE_SIZE * (((float)(j - ceilling_pixels))/ (float)Wall_pixels);
+                tex_y = (int)TEXTURE_SIZE * (((float)(j - ceilling_pixels))/ (float)Wall_pixels) ;
 
                 
                     
-                state.framebuffer[i + RENDER_W * j] = state.textures.grid_lines [tex_y * TEXTURE_SIZE + tex_x] ;
+                uint32_t pixel = state.textures.grid_lines[tex_y * TEXTURE_SIZE + tex_x];
+                uint8_t r = (pixel >> 16) & 0xFF;
+                uint8_t g = (pixel >> 8) & 0xFF;
+                uint8_t b = pixel & 0xFF;
+
+                r =(uint8_t)r*fade;
+                g = (uint8_t)g*fade;
+                b = (uint8_t)b* fade;
+
+
+                state.framebuffer[i + RENDER_W * j] = r << 16|g<<8 |b;
+
             }
             else {
-                state.framebuffer[i + RENDER_W * j] = 0x0000FF;
+                uint32_t pixel = 0x0000FF;
+                uint8_t r = (pixel >> 16) & 0xFF;
+                uint8_t g = (pixel >> 8) & 0xFF;
+                uint8_t b = pixel & 0xFF;
+
+                r = (uint8_t)r * fade;
+                g = (uint8_t)g * fade;
+                b = (uint8_t)b * fade;
+
+
+                state.framebuffer[i + RENDER_W * j] = r << 16 | g << 8 | b;
+
                     
                     
 			}
