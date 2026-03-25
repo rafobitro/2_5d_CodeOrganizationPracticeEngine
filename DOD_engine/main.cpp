@@ -1,6 +1,6 @@
 #define PI 3.1415926535f
 #define GRID_SIZE 64
-#define TEXTURE_SIZE 64
+#define TEXTURE_SIZE 128
 //16 by 9 ratio
 #define RENDER_W 800
 #define RENDER_H 450
@@ -47,6 +47,8 @@ void init_Textures(Textures& Textures) {
 struct Player {
     float x, y;
     float angle;
+    float speed;
+    float rotation_speed;
 };
 
 
@@ -54,6 +56,8 @@ void init_Player(Player& player) {
     player.x = 4* GRID_SIZE;
     player.y = 4* GRID_SIZE;
 	player.angle = 90.1;
+    player.speed = 2.0f;
+    player.rotation_speed = 1.0f ;
 }
 
 struct Game_state {
@@ -78,7 +82,7 @@ struct Game_state {
        {1,0,1,0,0,0,0,1},
        {1,1,1,1,1,1,1,1},
     };
-    float player_speed = 0.9f;
+    
 
 
 };
@@ -134,19 +138,33 @@ void render(Game_state& state) {
             float fade = 1.0f-(distance_to_wall/500.0f);
             if (fade < 0) fade = 0;
 
-            float horizon = RENDER_H / 2.0f;
             float distance;
 
 
             if (j < ceilling_pixels) {
 
-                distance = (GRID_SIZE * horizon) / (horizon - j);
+                distance = (0.5f*distance_to_wall)/((RENDER_H / 2.0f -j)/Wall_pixels);
 
                 fade = 1.0f - (distance / 500.0f);
                 if (fade < 0) fade = 0;
 
+                float y_cord;
+                float x_cord;
+                float angle = state.player.angle - ray_angle;
+                int ciling_tex_x;
+                int ciling_tex_y;
+                x_cord = state.player.x + (int)(std::cos(ray_angle * PI / 180.0f) * distance);
+                y_cord = state.player.y + (int)(std::sin(ray_angle * PI / 180.0f) * distance);
 
-                uint32_t pixel = 0xFF0000;
+                ciling_tex_x = (int)TEXTURE_SIZE * ((x_cord / GRID_SIZE) - floor((x_cord / GRID_SIZE)));
+
+
+                ciling_tex_y = (int)TEXTURE_SIZE * ((y_cord / GRID_SIZE) - floor((y_cord / GRID_SIZE)));
+
+
+                uint32_t pixel = state.textures.grid_lines[ciling_tex_y * TEXTURE_SIZE + ciling_tex_x];
+
+                //uint32_t pixel = 0xFF0000;
                 uint8_t r = (pixel >> 16) & 0xFF;
                 uint8_t g = (pixel >> 8) & 0xFF;
                 uint8_t b = pixel & 0xFF;
@@ -167,7 +185,7 @@ void render(Game_state& state) {
 
                 
                     
-                uint32_t pixel = state.textures.gradient[tex_y * TEXTURE_SIZE + tex_x];
+                uint32_t pixel = state.textures.horizontal_lines[tex_y * TEXTURE_SIZE + tex_x];
                 uint8_t r = (pixel >> 16) & 0xFF;
                 uint8_t g = (pixel >> 8) & 0xFF;
                 uint8_t b = pixel & 0xFF;
@@ -182,13 +200,28 @@ void render(Game_state& state) {
             }
             else {
               
-                distance = (GRID_SIZE * horizon) / (j - horizon);
+                distance = (0.5f * distance_to_wall) / ((j-RENDER_H / 2.0f) / Wall_pixels);
 
                 fade = 1.0f - (distance / 500.0f);
                 if (fade < 0) fade = 0;
 
 
-                uint32_t pixel = 0x0000FF;
+
+                float y_cord;
+                float x_cord;
+                float angle = state.player.angle - ray_angle;
+                int ciling_tex_x;
+                int ciling_tex_y;
+                x_cord = state.player.x + (int)(std::cos(ray_angle * PI / 180.0f) * distance);
+                y_cord = state.player.y + (int)(std::sin(ray_angle * PI / 180.0f) * distance);
+
+                ciling_tex_x = (int)TEXTURE_SIZE * ((x_cord / GRID_SIZE) - floor((x_cord / GRID_SIZE)));
+
+
+                ciling_tex_y = (int)TEXTURE_SIZE * ((y_cord / GRID_SIZE) - floor((y_cord / GRID_SIZE)));
+
+
+                uint32_t pixel = state.textures.vertical_lines[ciling_tex_y * TEXTURE_SIZE + ciling_tex_x];
                 uint8_t r = (pixel >> 16) & 0xFF;
                 uint8_t g = (pixel >> 8) & 0xFF;
                 uint8_t b = pixel & 0xFF;
@@ -358,23 +391,23 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
         player_y_change = 0;
 
 
-        if (GetAsyncKeyState('Q') & 0x8000) state.player.angle -= 0.5f;
+        if (GetAsyncKeyState('Q') & 0x8000) state.player.angle -= state.player.rotation_speed;
         if (GetAsyncKeyState('E') & 0x8000) state.player.angle += 0.5f;
         if (GetAsyncKeyState('W') & 0x8000) {
-            player_x_change += std::cos(state.player.angle * PI / 180.0f) * state.player_speed;
-            player_y_change += std::sin(state.player.angle * PI / 180.0f) * state.player_speed;
+            player_x_change += std::cos(state.player.angle * PI / 180.0f) * state.player.speed;
+            player_y_change += std::sin(state.player.angle * PI / 180.0f) * state.player.speed;
         }
         if (GetAsyncKeyState('S') & 0x8000) {
-            player_x_change -= std::cos(state.player.angle * PI / 180.0f) * state.player_speed;
-            player_y_change -= std::sin(state.player.angle * PI / 180.0f) * state.player_speed;
+            player_x_change -= std::cos(state.player.angle * PI / 180.0f) * state.player.speed;
+            player_y_change -= std::sin(state.player.angle * PI / 180.0f) * state.player.speed;
         }
         if (GetAsyncKeyState('D') & 0x8000) {
-            player_x_change += std::cos((state.player.angle+90) * PI / 180.0f) * state.player_speed;
-            player_y_change += std::sin((state.player.angle+90) * PI / 180.0f) * state.player_speed;
+            player_x_change += std::cos((state.player.angle+90) * PI / 180.0f) * state.player.speed;
+            player_y_change += std::sin((state.player.angle+90) * PI / 180.0f) * state.player.speed;
         }
         if (GetAsyncKeyState('A') & 0x8000) {
-            player_x_change -= std::cos((state.player.angle + 90) * PI / 180.0f) * state.player_speed;
-            player_y_change -= std::sin((state.player.angle + 90) * PI / 180.0f) * state.player_speed;
+            player_x_change -= std::cos((state.player.angle + 90) * PI / 180.0f) * state.player.speed;
+            player_y_change -= std::sin((state.player.angle + 90) * PI / 180.0f) * state.player.speed;
         }
         
         if (state.map[(int)(state.player.y + player_y_change) / GRID_SIZE][(int)(state.player.x + player_x_change) / GRID_SIZE] == 0) {
