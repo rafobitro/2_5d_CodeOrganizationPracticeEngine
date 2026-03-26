@@ -13,6 +13,8 @@
 #include <windows.h>
 #include <cstdint>
 #include <cmath>
+#include <chrono>
+
 
 
 
@@ -56,8 +58,8 @@ void init_Player(Player& player) {
     player.x = 4* GRID_SIZE;
     player.y = 4* GRID_SIZE;
 	player.angle = 90.1;
-    player.speed = 2.0f;
-    player.rotation_speed = 1.0f ;
+    player.speed = 3*GRID_SIZE;
+    player.rotation_speed = 90 ;
 }
 
 struct Game_state {
@@ -185,7 +187,7 @@ void render(Game_state& state) {
 
                 
                     
-                uint32_t pixel = state.textures.horizontal_lines[tex_y * TEXTURE_SIZE + tex_x];
+                uint32_t pixel = state.textures.gradient[tex_y * TEXTURE_SIZE + tex_x];
                 uint8_t r = (pixel >> 16) & 0xFF;
                 uint8_t g = (pixel >> 8) & 0xFF;
                 uint8_t b = pixel & 0xFF;
@@ -377,7 +379,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
     init_Textures(state.textures);
     state.framebuffer=(uint32_t*)malloc(4 * RENDER_W * RENDER_H);
    
-    float player_x_change = 0, player_y_change = 0;
+
+    
+    clock_t time_start = clock();
+    clock_t time_end = clock();
+    float delta_time;
+
+    float player_x_change , player_y_change , player_angle_change;
     MSG msg = {0};
     while (1) {
         while (PeekMessageW(&msg, NULL, 0, 0, PM_REMOVE)) {
@@ -386,13 +394,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
             DispatchMessageW(&msg);
         }
 
+        time_end = clock();
+        delta_time = (float)(time_end - time_start) / CLOCKS_PER_SEC;
+        time_start = time_end;
         
         player_x_change = 0, 
         player_y_change = 0;
+        player_angle_change = 0;
+        
 
-
-        if (GetAsyncKeyState('Q') & 0x8000) state.player.angle -= state.player.rotation_speed;
-        if (GetAsyncKeyState('E') & 0x8000) state.player.angle += 0.5f;
+        if (GetAsyncKeyState('Q') & 0x8000)  player_angle_change -= state.player.rotation_speed;
+        if (GetAsyncKeyState('E') & 0x8000)  player_angle_change += state.player.rotation_speed;
+        
         if (GetAsyncKeyState('W') & 0x8000) {
             player_x_change += std::cos(state.player.angle * PI / 180.0f) * state.player.speed;
             player_y_change += std::sin(state.player.angle * PI / 180.0f) * state.player.speed;
@@ -409,6 +422,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
             player_x_change -= std::cos((state.player.angle + 90) * PI / 180.0f) * state.player.speed;
             player_y_change -= std::sin((state.player.angle + 90) * PI / 180.0f) * state.player.speed;
         }
+
+        
+        player_x_change *= delta_time,
+        player_y_change *= delta_time;
+        player_angle_change *= delta_time;
+
+
+        state.player.angle += player_angle_change;
         
         if (state.map[(int)(state.player.y + player_y_change) / GRID_SIZE][(int)(state.player.x + player_x_change) / GRID_SIZE] == 0) {
             state.player.x += player_x_change;
@@ -418,6 +439,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
             // when 
             player_x_change/=4;
             player_y_change /= 4;
+
+
+            
 
             if (state.map[(int)(state.player.y) / GRID_SIZE][(int)(state.player.x + player_x_change) / GRID_SIZE] == 0) {
                 state.player.x += player_x_change;
@@ -431,7 +455,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
        
 
 
-
+        
 
 
         // player.angle += 1.0f;
@@ -440,7 +464,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
 
         HDC dc = GetDC(hwnd);
           StretchDIBits(dc, 0, 0, RENDER_W, RENDER_H, 0, 0, RENDER_W, RENDER_H, state.framebuffer, &info, DIB_RGB_COLORS, SRCCOPY);
-         // StretchDIBits(dc, 0, 0, RENDER_W, RENDER_H, 0, 0, TEXTURE_SIZE, TEXTURE_SIZE, state.textures.horizontal_lines, &texture_info, DIB_RGB_COLORS, SRCCOPY);
+         //StretchDIBits(dc, 0, 0, RENDER_W, RENDER_H, 0, 0, TEXTURE_SIZE, TEXTURE_SIZE, state.textures.gradient, &texture_info, DIB_RGB_COLORS, SRCCOPY);
 
         ReleaseDC(hwnd, dc);
     }
