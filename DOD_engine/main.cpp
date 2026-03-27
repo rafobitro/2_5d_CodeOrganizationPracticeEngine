@@ -144,9 +144,7 @@ void render(Game_state& state) {
 
 
 
-         ray_rad = ray_angle * PI / 180.0f;
-        ray_cos = cos(ray_angle * PI / 180.0f);
-         ray_sin = sin(ray_angle * PI / 180.0f);
+        
 
         for (int j = 0;j < state.render_h; j++) {
             float fade = 1.0f-(distance_to_wall/500.0f);
@@ -188,7 +186,7 @@ void render(Game_state& state) {
                 b = (uint8_t)b * fade;
 
 
-                state.framebuffer[i + state.render_w * j] = r << 16 | g << 8 | b;
+                state.framebuffer[i+state.render_w * j] = r << 16 | g << 8 | b;
 
       
             }
@@ -209,7 +207,7 @@ void render(Game_state& state) {
                 b = (uint8_t)b* fade;
 
 
-                state.framebuffer[i + state.render_w * j] = r << 16|g<<8 |b;
+                state.framebuffer[state.render_w * j +i] = r << 16|g<<8 |b;
 
             }
             else {
@@ -226,8 +224,8 @@ void render(Game_state& state) {
                 float angle = state.player.angle - ray_angle;
                 int ciling_tex_x;
                 int ciling_tex_y;
-                x_cord = state.player.x + (int)(std::cos(ray_angle * PI / 180.0f) * distance);
-                y_cord = state.player.y + (int)(std::sin(ray_angle * PI / 180.0f) * distance);
+                x_cord = state.player.x + (int)(ray_cos * distance);
+                y_cord = state.player.y + (int)(ray_sin * distance);
 
                 ciling_tex_x = (int)TEXTURE_SIZE * ((x_cord / GRID_SIZE) - floor((x_cord / GRID_SIZE)));
 
@@ -245,7 +243,7 @@ void render(Game_state& state) {
                 b = (uint8_t)b *= fade ;
 
 
-                state.framebuffer[i + state.render_w * j] = r << 16 | g << 8 | b;
+                state.framebuffer[state.render_w * j +i] = r << 16 | g << 8 | b;
 
                     
                     
@@ -267,9 +265,9 @@ void generate_horizontal_line_texture (uint32_t* bitmap) {
             if (j%4==0)
 				line_drowing = !line_drowing;
             if (line_drowing)
-				bitmap[i + TEXTURE_SIZE * j] = 0xFF00FF00;
+				bitmap[TEXTURE_SIZE * j + i] = 0xFF00FF00;
             else 
-                bitmap[i + TEXTURE_SIZE * j] = 0xFF000000;
+                bitmap[TEXTURE_SIZE * j + i] = 0xFF000000;
         }
     }
 }
@@ -283,9 +281,9 @@ void generate_vertical_line_texture (uint32_t* bitmap) {
         for (int j = 0;j < TEXTURE_SIZE;j++) {
             
             if (line_drowing)
-                bitmap[i + TEXTURE_SIZE * j] = 0xFF00FF00;
+                bitmap[TEXTURE_SIZE * j + i] = 0xFF00FF00;
             else 
-                bitmap[i + TEXTURE_SIZE * j] = 0xFF000000;
+                bitmap[TEXTURE_SIZE * j + i] = 0xFF000000;
         }
     }
 }
@@ -303,9 +301,9 @@ void generate_grid_line_texture(uint32_t* bitmap) {
                 horizontal_line = !horizontal_line;
 
             if (vertical_line || horizontal_line)
-                bitmap[i + TEXTURE_SIZE * j] = 0xFF000000;
+                bitmap[TEXTURE_SIZE * j + i] = 0xFF000000;
             else
-                bitmap[i + TEXTURE_SIZE * j] = 0xFF00FF00 ;
+                bitmap[TEXTURE_SIZE * j + i] = 0xFF00FF00 ;
         
             
             
@@ -336,7 +334,7 @@ void generate_gradient_texture (uint32_t* bitmap) {
 
 
 		    uint32_t Pixel  = (red << 16) | (green << 8) | blue;
-			bitmap[i + TEXTURE_SIZE *j] = Pixel;
+			bitmap[TEXTURE_SIZE *j+i] = Pixel;
         }
     }
 }
@@ -465,7 +463,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
     int fps, total_frames=0,avg_fps;
     float delta_time;
 
-
+    
 
   
     float player_x_change , player_y_change , player_angle_change;
@@ -474,7 +472,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
 
     while (running) {
         while (PeekMessageW(&msg, NULL, 0, 0, PM_REMOVE)) {
-            if (msg.message == WM_QUIT) return 0;
+            if (msg.message == WM_QUIT) running = false;
             TranslateMessage(&msg);
             DispatchMessageW(&msg);
         }
@@ -559,9 +557,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
     free(state.textures.vertical_lines);
     free(state.textures.horizontal_lines);
     free(state.textures.grid_lines);
-
+    
     game_end = clock();
-    int sesion_time=(float)(game_start - game_end) / CLOCKS_PER_SEC;
+    float sesion_time= (float)(game_end - game_start) / CLOCKS_PER_SEC;
     avg_fps = total_frames / sesion_time;
 
 
