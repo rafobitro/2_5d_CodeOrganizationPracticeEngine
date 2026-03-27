@@ -2,6 +2,7 @@
 #include "player.hpp"
 #include "textures.hpp"
 #include "renderer.hpp"
+#include "input.hpp"
 
 #include <windows.h>
 #include <cstdint>
@@ -133,6 +134,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
 
     MSG msg = {0};
 
+    Input input;
+
     while (running) {
         while (PeekMessageW(&msg, NULL, 0, 0, PM_REMOVE)) {
             if (msg.message == WM_QUIT) running = false;
@@ -153,63 +156,28 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
         player_angle_change = 0;
         
 
-        if (GetAsyncKeyState('Q') & 0x8000)  player_angle_change -= state.player.rotation_speed;
-        if (GetAsyncKeyState('E') & 0x8000)  player_angle_change += state.player.rotation_speed;
-        
-        if (GetAsyncKeyState('W') & 0x8000) {
-            player_x_change += std::cos(state.player.angle * PI / 180.0f) * state.player.speed;
-            player_y_change += std::sin(state.player.angle * PI / 180.0f) * state.player.speed;
-        }
-        if (GetAsyncKeyState('S') & 0x8000) {
-            player_x_change -= std::cos(state.player.angle * PI / 180.0f) * state.player.speed;
-            player_y_change -= std::sin(state.player.angle * PI / 180.0f) * state.player.speed;
-        }
-        if (GetAsyncKeyState('D') & 0x8000) {
-            player_x_change += std::cos((state.player.angle+90) * PI / 180.0f) * state.player.speed;
-            player_y_change += std::sin((state.player.angle+90) * PI / 180.0f) * state.player.speed;
-        }
-        if (GetAsyncKeyState('A') & 0x8000) {
-            player_x_change -= std::cos((state.player.angle + 90) * PI / 180.0f) * state.player.speed;
-            player_y_change -= std::sin((state.player.angle + 90) * PI / 180.0f) * state.player.speed;
-        }
+        if (GetAsyncKeyState('Q') & 0x8000)  input.turn_left = true;
+        else input.turn_left = false;
+        if (GetAsyncKeyState('E') & 0x8000)  input.turn_rigth = true;
+        else input.turn_rigth = false;
+        if (GetAsyncKeyState('W') & 0x8000) input.w = true;
+        else input.w = false;
+        if (GetAsyncKeyState('S') & 0x8000) input.s = true;
+        else input.s = false;
+        if (GetAsyncKeyState('D') & 0x8000)input.d = true;
+        else input.d = false;
+        if (GetAsyncKeyState('A') & 0x8000) input.a = true;
+        else input.a = false;
 
-        
-        player_x_change *= delta_time,
-        player_y_change *= delta_time;
-        player_angle_change *= delta_time;
-
-
-        state.player.angle += player_angle_change;
-        
-        if (state.map[(int)(state.player.y + player_y_change) / GRID_SIZE][(int)(state.player.x + player_x_change) / GRID_SIZE] == 0) {
-            state.player.x += player_x_change;
-            state.player.y += player_y_change;
-        }
-        else {
-            
-            player_x_change/=4;
-            player_y_change /= 4;
-
-
-            
-
-            if (state.map[(int)(state.player.y) / GRID_SIZE][(int)(state.player.x + player_x_change) / GRID_SIZE] == 0) {
-                state.player.x += player_x_change;
-            }
-            if (state.map[(int)(state.player.y + player_y_change) / GRID_SIZE][(int)(state.player.x) / GRID_SIZE] == 0) {
-                state.player.y += player_y_change;
-            }
-        }
-        
-
+        game_update(state,input,delta_time);
        
         
         render(state);
 		
 
-        HDC dc = GetDC(hwnd);
+         HDC dc = GetDC(hwnd);
+
          StretchDIBits(dc, 0, 0, state.render_w, state.render_h, 0, 0, state.render_w, state.render_h, state.framebuffer, &info, DIB_RGB_COLORS, SRCCOPY);
-       //  StretchDIBits(dc, 0, 0, state.render_w, state.render_h, 0, 0, TEXTURE_SIZE, TEXTURE_SIZE, state.textures.gradient, &texture_info, DIB_RGB_COLORS, SRCCOPY);
 
         ReleaseDC(hwnd, dc);
     }

@@ -5,6 +5,8 @@
 #define MAP_H 16
 
 
+
+#include "input.hpp"
 #include "player.hpp"
 #include "textures.hpp"
 
@@ -36,3 +38,4 @@ struct Game_state {
 };
 
 void init_Player(Player& player);
+void game_update(Game_state& state, Input& input, float delta_time);

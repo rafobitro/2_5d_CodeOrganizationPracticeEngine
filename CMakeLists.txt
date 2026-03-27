@@ -10,7 +10,12 @@ add_executable(DOD_engine WIN32
     DOD_engine/textures.cpp
 )
 
-target_sources(DOD_engine PRIVATE DOD_engine/win_main.cpp )
-#  cl DOD_engine/main.cpp /Fe:DOD_engine/main.exe user32.lib gdi32.lib
+
+add_executable(texture_viewer WIN32
+    DOD_engine/win_texture_vewer.cpp
+    DOD_engine/textures.cpp
+)
+
+target_link_libraries(texture_viewer PRIVATE user32 gdi32)
 
 target_link_libraries(DOD_engine PRIVATE user32 gdi32)
