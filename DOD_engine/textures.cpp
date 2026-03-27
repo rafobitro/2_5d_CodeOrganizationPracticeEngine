@@ -1,0 +1,89 @@
+#include "textures.hpp"
+
+
+
+
+
+void init_Textures(Textures& Textures) {
+
+    Textures.gradient = (uint32_t*)malloc(4 * TEXTURE_SIZE * TEXTURE_SIZE);
+    Textures.vertical_lines = (uint32_t*)malloc(4 * TEXTURE_SIZE * TEXTURE_SIZE);
+    Textures.horizontal_lines = (uint32_t*)malloc(4 * TEXTURE_SIZE * TEXTURE_SIZE);
+    Textures.grid_lines = (uint32_t*)malloc(4 * TEXTURE_SIZE * TEXTURE_SIZE);
+
+    generate_gradient_texture(Textures.gradient);
+    generate_horizontal_line_texture(Textures.horizontal_lines);
+    generate_vertical_line_texture(Textures.vertical_lines);
+    generate_grid_line_texture(Textures.grid_lines);
+}
+
+void generate_horizontal_line_texture(uint32_t* bitmap) {
+    for (int i = 0;i < TEXTURE_SIZE;i++) {
+        bool line_drowing = false;
+        for (int j = 0;j < TEXTURE_SIZE;j++) {
+
+            if (j % 4 == 0)
+                line_drowing = !line_drowing;
+            if (line_drowing)
+                bitmap[TEXTURE_SIZE * j + i] = 0xFF00FF00;
+            else
+                bitmap[TEXTURE_SIZE * j + i] = 0xFF000000;
+        }
+    }
+}
+
+void generate_vertical_line_texture(uint32_t* bitmap) {
+    bool line_drowing = false;
+    for (int i = 0;i < TEXTURE_SIZE;i++) {
+        if (i % 4 == 0)
+            line_drowing = !line_drowing;
+        for (int j = 0;j < TEXTURE_SIZE;j++) {
+
+            if (line_drowing)
+                bitmap[TEXTURE_SIZE * j + i] = 0xFF00FF00;
+            else
+                bitmap[TEXTURE_SIZE * j + i] = 0xFF000000;
+        }
+    }
+}
+
+void generate_grid_line_texture(uint32_t* bitmap) {
+    bool vertical_line = false;
+    bool horizontal_line = false;
+    for (int i = 0;i < TEXTURE_SIZE;i++) {
+        if (i % 4 == 0)
+            vertical_line = !vertical_line;
+        for (int j = 0;j < TEXTURE_SIZE;j++) {
+
+
+            if (j % 8 == 0)
+                horizontal_line = !horizontal_line;
+
+            if (vertical_line || horizontal_line)
+                bitmap[TEXTURE_SIZE * j + i] = 0xFF000000;
+            else
+                bitmap[TEXTURE_SIZE * j + i] = 0xFF00FF00;
+        }
+    }
+}
+
+void generate_gradient_texture(uint32_t* bitmap) {
+
+    for (int i = 0;i < TEXTURE_SIZE;i++) {
+        for (int j = 0;j < TEXTURE_SIZE;j++) {
+
+            float fx = (float)i / TEXTURE_SIZE;
+            float fy = (float)j / TEXTURE_SIZE;
+
+            uint8_t red = (uint8_t)(255.0f * (1.0f - std::sqrt(fx * fx + fy * fy) / std::sqrt(2.0f)));
+            red += (uint8_t)(255.0f * (1.0f - std::sqrt((1 - fx) * (1 - fx) + (1 - fy) * (1 - fy)) / std::sqrt(2.0f)));
+            uint8_t green = (uint8_t)(255.0f * (1.0f - std::sqrt((1 - fx) * (1 - fx) + fy * fy) / std::sqrt(2.0f)));
+            uint8_t blue = (uint8_t)(255.0f * (1.0f - std::sqrt(fx * fx + (1 - fy) * (1 - fy)) / std::sqrt(2.0f)));
+
+
+
+            uint32_t Pixel = (red << 16) | (green << 8) | blue;
+            bitmap[TEXTURE_SIZE * j + i] = Pixel;
+        }
+    }
+}
