@@ -2,6 +2,7 @@
 #include "player.hpp"
 #include "textures.hpp"
 #include "renderer.hpp"
+#include "UI_renderer.hpp"
 #include "input.hpp"
 
 #include <windows.h>
@@ -126,11 +127,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
 
     int fps, total_frames=0,avg_fps;
     float delta_time;
-
-    
-
-  
-    float player_x_change , player_y_change , player_angle_change;
+    float sesion_time = 0;
 
     MSG msg = {0};
 
@@ -146,14 +143,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
         
         frame_end = clock();
         delta_time = (float)(frame_end - frame_start) / CLOCKS_PER_SEC;
+        sesion_time += delta_time;
         frame_start = frame_end;
-        
-        fps = 1.0f / delta_time; 
         total_frames++;
-
-        player_x_change = 0, 
-        player_y_change = 0;
-        player_angle_change = 0;
+        fps = 1.0f / delta_time; 
+        avg_fps = total_frames / sesion_time;
         
 
         if (GetAsyncKeyState('Q') & 0x8000)  input.turn_left = true;
@@ -173,7 +167,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
        
         
         render(state);
-		
+        UI_renderer(state,fps,avg_fps);
+
 
          HDC dc = GetDC(hwnd);
 
@@ -188,13 +183,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
     free(state.textures.vertical_lines);
     free(state.textures.horizontal_lines);
     free(state.textures.grid_lines);
-    
-    game_end = clock();
-    float sesion_time= (float)(game_end - game_start) / CLOCKS_PER_SEC;
-    avg_fps = total_frames / sesion_time;
-
-
-
+ 
 
     return 0; 
 }
