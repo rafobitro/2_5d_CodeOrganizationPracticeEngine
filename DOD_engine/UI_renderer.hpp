@@ -4,7 +4,8 @@
 #define TEXT_MAX 16
 #define DEFOULT_TEXT "HELOW WORLD!\0"
 #define DEFOULT_X 0
-#define DEFOULT_Y 30
+#define DEFOULT_Y 0
+#define pseudo_resolution 100
 
 
 
@@ -13,6 +14,7 @@
 
 
 struct UI_text {
+    // from 0 to pseudo_resolution (0,0) is in left top corner
     int x= DEFOULT_X, y= DEFOULT_Y;
     int font_size = DEFOULT_FONT_SIZE;
     uint32_t color= DEFOULT_COLOR;
@@ -22,7 +24,7 @@ struct UI_text {
 
 
 
-void UI_renderer(Game_state state,int fps,int avg_fps);
+void UI_renderer(Game_state& state,int fps,int avg_fps);
 
-void drow_text(UI_text text,Game_state state);
+void drow_text(UI_text text,Game_state& state);
 

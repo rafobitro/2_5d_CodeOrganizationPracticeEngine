@@ -1,24 +1,36 @@
 #include "font8x8_basic.h"
 #include "UI_renderer.hpp"
- 
+#include <iostream>
 
 int convert(int cord , int size) {
 	return size * ( cord/100.0f);
 }
 
-void UI_renderer(Game_state state, int fps, int avg_fps){
+void UI_renderer(Game_state& state, int fps, int avg_fps){
 
-	UI_text text;
+	UI_text fps_text;
+	UI_text avg_fps_text;
 
-	strcpy(text.leters, DEFOULT_TEXT);
-	text.x = convert(text.x,state.render_w);
-	text.y = convert(text.y, state.render_h);
+	char buffer[TEXT_MAX];
+	sprintf(buffer, "FPS %d", fps);
+	strcpy(fps_text.leters, buffer);
+	sprintf(buffer, "AVG FPS %d", avg_fps);
+	strcpy(avg_fps_text.leters, buffer);
+
+
+	fps_text.x = convert(fps_text.x, state.render_w);
+	fps_text.y = convert(fps_text.y, state.render_h);
+	avg_fps_text.x = convert(fps_text.x,state.render_w);
+	avg_fps_text.y = convert(fps_text.y+10, state.render_h);
 	
 
-	drow_text(text,state);
+	drow_text(fps_text,state);
+	drow_text(avg_fps_text, state);
+
+
 }
 
-void drow_text(UI_text text,Game_state state) {
+void drow_text(UI_text text,Game_state& state) {
 
 	 
 	for (int leter_index = 0;text.leters[leter_index] != '\0'; leter_index++) {
@@ -36,7 +48,10 @@ void drow_text(UI_text text,Game_state state) {
 
 							int x_cord = text.x + (leter_index * 8 * text.font_size) + (row * text.font_size) + j;
 							int y_cord = text.y + (col * text.font_size) + i;
-						//	if(x_cord>state.render_w)
+							if (x_cord >= state.render_w)
+								x_cord -= state.render_w;
+							if (y_cord >= state.render_h)
+								y_cord -= state.render_h;
 							state.framebuffer[y_cord*state.render_w+x_cord] = text.color;
 
 						}
