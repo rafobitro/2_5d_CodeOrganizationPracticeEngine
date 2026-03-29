@@ -78,7 +78,7 @@ void render(Game_state& state) {
                 ciling_tex_y = (int)TEXTURE_SIZE * ((y_cord / GRID_SIZE) - floor((y_cord / GRID_SIZE)));
 
 
-                uint32_t pixel = state.textures.grid_lines[ciling_tex_y * TEXTURE_SIZE + ciling_tex_x];
+                uint32_t pixel = state.textures.gradient[ciling_tex_y * TEXTURE_SIZE + ciling_tex_x];
 
                 //uint32_t pixel = 0xFF0000;
                 uint8_t r = (pixel >> 16) & 0xFF;
@@ -101,7 +101,7 @@ void render(Game_state& state) {
 
 
 
-                uint32_t pixel = state.textures.gradient[tex_y * TEXTURE_SIZE + tex_x];
+                uint32_t pixel = state.textures.vertical_lines[tex_y * TEXTURE_SIZE + tex_x];
                 uint8_t r = (pixel >> 16) & 0xFF;
                 uint8_t g = (pixel >> 8) & 0xFF;
                 uint8_t b = pixel & 0xFF;
@@ -137,7 +137,7 @@ void render(Game_state& state) {
                 ciling_tex_y = (int)TEXTURE_SIZE * ((y_cord / GRID_SIZE) - floor((y_cord / GRID_SIZE)));
 
 
-                uint32_t pixel = state.textures.vertical_lines[ciling_tex_y * TEXTURE_SIZE + ciling_tex_x];
+                uint32_t pixel = state.textures.gradient[ciling_tex_y * TEXTURE_SIZE + ciling_tex_x];
                 uint8_t r = (pixel >> 16) & 0xFF;
                 uint8_t g = (pixel >> 8) & 0xFF;
                 uint8_t b = pixel & 0xFF;

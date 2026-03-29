@@ -1,7 +1,7 @@
 #pragma once
 #define DEFOULT_COLOR 0xFFD4D4D4
 #define DEFOULT_FONT_SIZE 5
-#define TEXT_MAX 16
+#define TEXT_MAX 32
 #define DEFOULT_TEXT "HELOW WORLD!\0"
 #define DEFOULT_X 0
 #define DEFOULT_Y 0

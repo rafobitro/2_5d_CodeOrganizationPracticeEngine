@@ -7,7 +7,7 @@ int convert(int cord , int size) {
 }
 
 void UI_renderer(Game_state& state, int fps, int avg_fps){
-
+	//fps
 	UI_text fps_text;
 	UI_text avg_fps_text;
 
@@ -24,8 +24,23 @@ void UI_renderer(Game_state& state, int fps, int avg_fps){
 	avg_fps_text.y = convert(fps_text.y+10, state.render_h);
 	
 
-	drow_text(fps_text,state);
+	
+
+	//crosshair
+
+	UI_text crosshair;
+	strcpy(crosshair.leters, "+");
+	crosshair.x = convert(50, state.render_w);
+	crosshair.y = convert(50, state.render_h);
+
+
+	drow_text(fps_text, state);
 	drow_text(avg_fps_text, state);
+	drow_text(crosshair, state);
+
+
+
+
 
 
 }

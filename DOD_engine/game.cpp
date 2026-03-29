@@ -27,8 +27,8 @@ void game_update(Game_state& state, Input& input, float delta_time) {
 		player_y_change -= std::sin(state.player.angle * PI / 180.0f) * state.player.speed;
 	}
 	if (input.d) {
-		player_x_change -= std::cos((state.player.angle + 90) * PI / 180.0f) * state.player.speed;
-		player_y_change -= std::sin((state.player.angle + 90) * PI / 180.0f) * state.player.speed;
+		player_x_change += std::cos((state.player.angle + 90) * PI / 180.0f) * state.player.speed;
+		player_y_change += std::sin((state.player.angle + 90) * PI / 180.0f) * state.player.speed;
 	}
 	if (input.a) {
 		player_x_change -= std::cos((state.player.angle + 90) * PI / 180.0f) * state.player.speed;
