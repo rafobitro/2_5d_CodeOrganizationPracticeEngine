@@ -94,7 +94,7 @@ Below are screenshots showing the current state of the engine.
 
 <img width="800" height="476" alt="image" src="https://github.com/user-attachments/assets/9fa41ff8-d6f5-41fb-91b2-a745b5c04ebd" />
 
-<img width="796" height="476" alt="image" src="https://github.com/user-attachments/assets/f88eac69-a869-4d0d-a3bd-41e3076212be" />
+<img width="793" height="476" alt="image" src="https://github.com/user-attachments/assets/e21f0048-6036-45a2-aace-91aeacad9ea4" />
 
 <img width="508" height="536" alt="image" src="https://github.com/user-attachments/assets/58c1e6b4-fae7-4b30-96bb-35dc02113d1a" />
 
