@@ -146,7 +146,5 @@ Note d is not distance from player eye to the pixel of the (ceiling/ floor) it i
 
 delta time is much easier than I thought i just need to measure time of each frame in second and multiplay to a game logic speed which is game units per second 
 
-game UI is overlay on top of the game renderer and it is working by modiflying part of the bitmap acording to the input like location and size of the input i added overflow to independed from a location even if the thing is not fit it would not cause a crash. Also i usued used coordinate abstraction to calculate cordinates independed from resolution .
-
-
+game UI is overlay on top of the game renderer and it is working by modiflying part of the bitmap acording to the input like location and size of the input i added overflow to independed from a location even if the thing is not fit it would not cause a crash. Also i usued used coordinate abstraction to calculate cordinates independed from resolution . And I used Daniel Helper's font ` 8x8 basic.h` for the ASCII bitmaps.
 
