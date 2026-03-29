@@ -42,6 +42,9 @@ Optimization Readiness – which is easier to optimize later using SIMD and mult
 * Bullet rendering (planned)
 * Multiple textures per map (planned)
 * Wall animations (destruction, doors opening, etc.) (planned)
+* DDA optimisation (planed)
+* diagonal walls (planed)
+* deferent wall hgth and higth change (planed)
 
 **Textures**
 
@@ -60,12 +63,12 @@ Optimization Readiness – which is easier to optimize later using SIMD and mult
 **System**
 
 * Double buffering (planned)
-* Delta time (planned)
+* Delta time (done in DOD)
 * Frame cap (planned)
-* Input abstraction from Windows API (planned)
-* Renderer abstraction from Windows API (planned)
+* Input abstraction from Windows API (done in DOD)
+* Renderer abstraction from Windows API (done in DOD)
 * Sound system (planned)
-* UI (health bar, FPS counter, weapon view) (planned)
+* UI (health bar, FPS counter, weapon view) (partly done in DOD)
 * Networking for multiplayer (maybe)
 
 **Game**
@@ -89,13 +92,13 @@ Below are screenshots showing the current state of the engine.
 
 
 
-<img width="793" height="477" alt="image" src="https://github.com/user-attachments/assets/45c53bc1-14a2-4b9e-bfa2-6b519557727e" />
+<img width="800" height="476" alt="image" src="https://github.com/user-attachments/assets/9fa41ff8-d6f5-41fb-91b2-a745b5c04ebd" />
 
-<img width="794" height="478" alt="image" src="https://github.com/user-attachments/assets/905e9b24-21f1-4d40-9380-ddb29d7b6f53" />
+<img width="796" height="476" alt="image" src="https://github.com/user-attachments/assets/f88eac69-a869-4d0d-a3bd-41e3076212be" />
 
-<img width="794" height="477" alt="image" src="https://github.com/user-attachments/assets/a74cd813-6056-4e77-9e45-a112091d3130" />
+<img width="508" height="536" alt="image" src="https://github.com/user-attachments/assets/58c1e6b4-fae7-4b30-96bb-35dc02113d1a" />
 
-<img width="793" height="469" alt="image" src="https://github.com/user-attachments/assets/b3937780-ccf1-4a2f-940c-bce4adf912e0" />
+<img width="507" height="537" alt="image" src="https://github.com/user-attachments/assets/dfd0f0d9-031e-4186-a4c1-fb23dd9f2eb5" />
 
 
 
@@ -111,7 +114,7 @@ cmake --build build
 You can modify the CMake configuration to use a different compiler if needed.
 
 ---
-## Interesting Technical Details Or Challenges
+## Technical Details And Challenges
 
 The rendering approach is simple in concept: I use an array of colors and pass it to the Windows API to draw the frame.
 
@@ -140,6 +143,10 @@ we can derive:
 d = (D × h) / H
 
 Note d is not distance from player eye to the pixel of the (ceiling/ floor) it is distance "to a point with the same X and Y coordinates, ignoring the Z axis . 
+
+delta time is much easier than I thought i just need to measure time of each frame in second and multiplay to a game logic speed which is game units per second 
+
+game UI is overlay on top of the game renderer and it is working by modiflying part of the bitmap acording to the input like location and size of the input i added overflow to independed from a location even if the thing is not fit it would not cause a crash. Also i usued used coordinate abstraction to calculate cordinates independed from resolution .
 
 
 
