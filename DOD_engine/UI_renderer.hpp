@@ -5,18 +5,17 @@
 #define DEFOULT_TEXT "HELOW WORLD!\0"
 #define DEFOULT_X 0
 #define DEFOULT_Y 0
-#define pseudo_resolution 100
-
 
 
 #include <string.h>
 # include "game.hpp"
-
+#include "renderer.hpp"
 
 struct UI_text {
-    // from 0 to pseudo_resolution (0,0) is in left top corner
+    // cordinates are starting from 0 to starting resolution (RENEER_H and RENDER_W constatns) (0,0) is in left top corner
     int x= DEFOULT_X, y= DEFOULT_Y;
-    int font_size = DEFOULT_FONT_SIZE;
+    int font_height = DEFOULT_FONT_SIZE;
+    int font_width = DEFOULT_FONT_SIZE;
     uint32_t color= DEFOULT_COLOR;
     // needs to end with \0
     char leters[TEXT_MAX];

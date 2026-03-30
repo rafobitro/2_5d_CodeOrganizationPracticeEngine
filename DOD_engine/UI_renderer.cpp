@@ -2,9 +2,19 @@
 #include "UI_renderer.hpp"
 #include <iostream>
 
-int convert(int cord , int size) {
-	return size * ( cord/100.0f);
+
+
+
+void convert(UI_text & text, int render_w, int render_h) {
+
+	text.x = render_h * (text.x / (float)RENDER_H);
+	text.y = render_w * (text.y / (float)RENDER_W);
+	text.font_height= render_h * (text.font_height / (float)RENDER_H);
+	text.font_width = render_w * (text.font_width / (float)RENDER_W);
+
 }
+
+
 
 void UI_renderer(Game_state& state, int fps, int avg_fps){
 	//fps
@@ -17,21 +27,29 @@ void UI_renderer(Game_state& state, int fps, int avg_fps){
 	sprintf(buffer, "AVG FPS %d", avg_fps);
 	strcpy(avg_fps_text.leters, buffer);
 
+	avg_fps_text.y += avg_fps_text.font_height*8;
 
-	fps_text.x = convert(fps_text.x, state.render_w);
-	fps_text.y = convert(fps_text.y, state.render_h);
-	avg_fps_text.x = convert(fps_text.x,state.render_w);
-	avg_fps_text.y = convert(fps_text.y+10, state.render_h);
 	
 
+
+	
 	
 
 	//crosshair
 
 	UI_text crosshair;
 	strcpy(crosshair.leters, "+");
-	crosshair.x = convert(50, state.render_w);
-	crosshair.y = convert(50, state.render_h);
+	
+	crosshair.y = RENDER_H / 2;
+	crosshair.x = RENDER_W / 2;
+	crosshair.color = 0xFF0000;
+
+	convert(fps_text, state.render_w, state.render_h);
+	convert(avg_fps_text, state.render_w, state.render_h);
+	convert(crosshair, state.render_w, state.render_h);
+
+
+
 
 
 	drow_text(fps_text, state);
@@ -58,11 +76,11 @@ void drow_text(UI_text text,Game_state& state) {
 				
 				if (row_bits & (1 << row)) {
 										
-					for (int i = 0;i < text.font_size;i++) {
-						for (int j = 0; j < text.font_size;j++) {
+					for (int i = 0;i < text.font_height;i++) {
+						for (int j = 0; j < text.font_width;j++) {
 
-							int x_cord = text.x + (leter_index * 8 * text.font_size) + (row * text.font_size) + j;
-							int y_cord = text.y + (col * text.font_size) + i;
+							int x_cord = text.x + (leter_index * 8 * text.font_width) + (row * text.font_width) + j;
+							int y_cord = text.y + (col * text.font_height) + i;
 							if (x_cord >= state.render_w)
 								x_cord -= state.render_w;
 							if (y_cord >= state.render_h)
