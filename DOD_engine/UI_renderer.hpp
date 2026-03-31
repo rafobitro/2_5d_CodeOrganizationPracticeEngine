@@ -22,6 +22,7 @@ struct UI_text {
 };
 
 
+void convert(UI_text& text, int render_w, int render_h);
 
 void UI_renderer(Game_state& state,int fps,int avg_fps);
 

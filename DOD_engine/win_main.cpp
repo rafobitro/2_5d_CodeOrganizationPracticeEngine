@@ -119,13 +119,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
 	
 
 
-    clock_t game_start = clock();
-    clock_t game_end;
+    clock_t last_time = clock();
+    clock_t curent_time;
 
     clock_t frame_start = clock();
     clock_t frame_end;
 
-    int fps, total_frames=0,avg_fps;
+    int fps=0, total_frames = 0, last_frames = 0,avg_fps=0;
     float delta_time;
     float sesion_time = 0;
 
@@ -146,7 +146,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
         sesion_time += delta_time;
         frame_start = frame_end;
         total_frames++;
-        fps = 1.0f / delta_time; 
+        curent_time = clock();
+        if ((last_time - curent_time) / CLOCKS_PER_SEC) {
+            fps = total_frames - last_frames;  
+           
+            last_frames = total_frames;
+            last_time = curent_time;
+        }
         avg_fps = total_frames / sesion_time;
         
 
@@ -167,8 +173,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
        
         
         render(state);
-        UI_renderer(state,fps,avg_fps);
-
+        UI_renderer(state, fps, avg_fps);
+        
 
          HDC dc = GetDC(hwnd);
 

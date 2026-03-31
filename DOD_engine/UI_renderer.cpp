@@ -5,7 +5,7 @@
 
 
 
-void convert(UI_text & text, int render_w, int render_h) {
+void convert(UI_text& text, int render_w, int render_h) {
 
 	text.x *= (render_w / (float)RENDER_W);
 	text.y *= (render_h / (float)RENDER_H);
@@ -13,7 +13,6 @@ void convert(UI_text & text, int render_w, int render_h) {
 	text.font_width *= (render_w / (float)RENDER_W);
 
 }
-
 
 
 void UI_renderer(Game_state& state, int fps, int avg_fps){
@@ -78,15 +77,16 @@ void drow_text(UI_text text,Game_state& state) {
 				if (row_bits & (1 << row)) {
 										
 					for (int i = 0;i < text.font_height;i++) {
+						int y_cord = text.y + (col * text.font_height) + i;
+						if (y_cord >= state.render_h)
+							y_cord -= state.render_h;
+						int y_offset = y_cord * state.render_w;
 						for (int j = 0; j < text.font_width;j++) {
-
 							int x_cord = text.x + (leter_index * 8 * text.font_width) + (row * text.font_width) + j;
-							int y_cord = text.y + (col * text.font_height) + i;
 							if (x_cord >= state.render_w)
 								x_cord -= state.render_w;
-							if (y_cord >= state.render_h)
-								y_cord -= state.render_h;
-							state.framebuffer[y_cord*state.render_w+x_cord] = text.color;
+							
+							state.framebuffer[y_offset +x_cord] = text.color;
 
 						}
 					}
