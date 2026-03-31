@@ -1,14 +1,15 @@
 #pragma once
 #define TEXTURE_SIZE 64
+#define MAX_TEXTURES 32
+#define TEXTURE_PIXELS (TEXTURE_SIZE * TEXTURE_SIZE)
 #include <cstdint>
 #include <cmath>
 
 struct Textures {
-    uint32_t* gradient;
-    uint32_t* vertical_lines;
-    uint32_t* horizontal_lines;
-    uint32_t* grid_lines;
+    uint32_t data[MAX_TEXTURES][TEXTURE_PIXELS];
+    int count;
 };
+
 
 void generate_gradient_texture(uint32_t* bitmap);
 void generate_horizontal_line_texture(uint32_t* bitmap);

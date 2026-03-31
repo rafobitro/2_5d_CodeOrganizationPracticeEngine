@@ -185,10 +185,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
 
 
     free(state.framebuffer);
-    free(state.textures.gradient);
-    free(state.textures.vertical_lines);
-    free(state.textures.horizontal_lines);
-    free(state.textures.grid_lines);
+    
  
 
     return 0; 

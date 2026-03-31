@@ -1,20 +1,14 @@
 #include "textures.hpp"
 
 
+void init_Textures(Textures& textures) {
 
-
-
-void init_Textures(Textures& Textures) {
-
-    Textures.gradient = (uint32_t*)malloc(4 * TEXTURE_SIZE * TEXTURE_SIZE);
-    Textures.vertical_lines = (uint32_t*)malloc(4 * TEXTURE_SIZE * TEXTURE_SIZE);
-    Textures.horizontal_lines = (uint32_t*)malloc(4 * TEXTURE_SIZE * TEXTURE_SIZE);
-    Textures.grid_lines = (uint32_t*)malloc(4 * TEXTURE_SIZE * TEXTURE_SIZE);
-
-    generate_gradient_texture(Textures.gradient);
-    generate_horizontal_line_texture(Textures.horizontal_lines);
-    generate_vertical_line_texture(Textures.vertical_lines);
-    generate_grid_line_texture(Textures.grid_lines);
+    
+    generate_gradient_texture(textures.data[0]);
+    generate_horizontal_line_texture(textures.data[1]);
+    generate_vertical_line_texture(textures.data[2]);
+    generate_grid_line_texture(textures.data[3]);
+    textures.count = 4;
 }
 
 void generate_horizontal_line_texture(uint32_t* bitmap) {
