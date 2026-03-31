@@ -7,10 +7,10 @@
 
 void convert(UI_text & text, int render_w, int render_h) {
 
-	text.x = render_h * (text.x / (float)RENDER_H);
-	text.y = render_w * (text.y / (float)RENDER_W);
-	text.font_height= render_h * (text.font_height / (float)RENDER_H);
-	text.font_width = render_w * (text.font_width / (float)RENDER_W);
+	text.x *= (render_w / (float)RENDER_W);
+	text.y *= (render_h / (float)RENDER_H);
+	text.font_height *= (render_h / (float)RENDER_H);
+	text.font_width *= (render_w / (float)RENDER_W);
 
 }
 
@@ -40,8 +40,9 @@ void UI_renderer(Game_state& state, int fps, int avg_fps){
 	UI_text crosshair;
 	strcpy(crosshair.leters, "+");
 	
-	crosshair.y = RENDER_H / 2;
-	crosshair.x = RENDER_W / 2;
+	// ubdate font size before centering 
+	crosshair.y = RENDER_H / 2 -( crosshair.font_height*4);
+	crosshair.x = RENDER_W / 2 - (crosshair.font_width * 4);
 	crosshair.color = 0xFF0000;
 
 	convert(fps_text, state.render_w, state.render_h);
