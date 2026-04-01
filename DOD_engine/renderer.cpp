@@ -5,7 +5,7 @@
 void render(Game_state& state) {
     float ray_angle = (state.player.angle - HORIZONTAL_FOV / 2.0f);
     float angle_step = (1.0f / state.render_w) * HORIZONTAL_FOV;
-    float ray_x, ray_y;
+    float ray_x, ray_y, ray_rad, ray_cos, ray_sin;
     int distance_to_wall;
     bool hit_vertical_wall;
     //raycaster
@@ -14,11 +14,11 @@ void render(Game_state& state) {
         ray_angle += angle_step;
         ray_x = state.player.x;
         ray_y = state.player.y;
+        ray_rad = ray_angle * PI / 180.0f;
+        ray_cos = cos(ray_rad);
+        ray_sin = sin(ray_rad);
         distance_to_wall = 0;
         hit_vertical_wall = false;
-        float ray_rad = ray_angle * PI / 180.0f;
-        float ray_cos = cos(ray_rad);
-        float ray_sin = sin(ray_rad);
 
         while (state.map[(int)ray_y / GRID_SIZE][(int)ray_x / GRID_SIZE] == 0) {
             distance_to_wall++;
@@ -33,14 +33,13 @@ void render(Game_state& state) {
             ray_x = next_x;
             ray_y = next_y;
         }
-
         int total_visable_hight = distance_to_wall * std::tan((VERTICAL_FOV / 2) * PI / 180.f);
-        int Wall_pixels = (int)(state.render_h/2) * (WALL_SIZE-state.player.higth) / (total_visable_hight/2.0f);
-        int Greed_pixels= state.render_h * GRID_SIZE / total_visable_hight;
+        int Wall_pixels = (int)(state.render_h / 2) * (WALL_SIZE - state.player.higth) / (total_visable_hight / 2.0f);
+        int Greed_pixels = state.render_h * GRID_SIZE / total_visable_hight;
         int ceilling_pixels = (state.render_h / 2) - (Wall_pixels);
         Wall_pixels += Greed_pixels / 2;
 
-        
+
 
         int tex_x, tex_y;
 
@@ -62,7 +61,7 @@ void render(Game_state& state) {
 
             if (j < ceilling_pixels) {
 
-                distance = (((WALL_SIZE-state.player.higth)/(float)GRID_SIZE) * distance_to_wall) / ((state.render_h / 2.0f - j) / ( ( Greed_pixels)));
+                distance = (((WALL_SIZE - state.player.higth) / (float)GRID_SIZE) * distance_to_wall) / ((state.render_h / 2.0f - j) / ((Greed_pixels)));
 
                 fade = 1.0f - (distance / 500.0f);
                 if (fade < 0) fade = 0;
@@ -81,7 +80,7 @@ void render(Game_state& state) {
                 ciling_tex_y = (int)TEXTURE_SIZE * ((y_cord / GRID_SIZE) - floor((y_cord / GRID_SIZE)));
 
 
-                uint32_t pixel = state.textures.data [(state.texture_map[(int)y_cord / GRID_SIZE][(int)x_cord / GRID_SIZE])%10] [ciling_tex_y * TEXTURE_SIZE + ciling_tex_x];
+                uint32_t pixel = state.textures.data[(state.texture_map[(int)y_cord / GRID_SIZE][(int)x_cord / GRID_SIZE]) % 10][ciling_tex_y * TEXTURE_SIZE + ciling_tex_x];
 
                 //uint32_t pixel = 0xFF0000;
                 uint8_t r = (pixel >> 16) & 0xFF;
@@ -102,8 +101,8 @@ void render(Game_state& state) {
 
                 tex_y = (int)TEXTURE_SIZE * (((float)(j - ceilling_pixels)) / (float)Wall_pixels);
 
-              
-                uint32_t pixel = state.textures.data[((state.texture_map[(int)ray_y / GRID_SIZE][(int)ray_x / GRID_SIZE])/10 )% 10][tex_y * TEXTURE_SIZE + tex_x];
+
+                uint32_t pixel = state.textures.data[((state.texture_map[(int)ray_y / GRID_SIZE][(int)ray_x / GRID_SIZE]) / 10) % 10][tex_y * TEXTURE_SIZE + tex_x];
 
                 uint8_t r = (pixel >> 16) & 0xFF;
                 uint8_t g = (pixel >> 8) & 0xFF;
@@ -119,7 +118,7 @@ void render(Game_state& state) {
             }
             else {
 
-                distance = ((state.player.higth/(float)GRID_SIZE)* distance_to_wall) / ((j - state.render_h / 2.0f) / Greed_pixels);
+                distance = ((state.player.higth / (float)GRID_SIZE) * distance_to_wall) / ((j - state.render_h / 2.0f) / Greed_pixels);
 
                 fade = 1.0f - (distance / 500.0f);
                 if (fade < 0) fade = 0;
@@ -140,7 +139,7 @@ void render(Game_state& state) {
                 ciling_tex_y = (int)TEXTURE_SIZE * ((y_cord / GRID_SIZE) - floor((y_cord / GRID_SIZE)));
 
 
-                uint32_t pixel = state.textures.data[((state.texture_map[(int)y_cord / GRID_SIZE][(int)x_cord / GRID_SIZE])/100)%10] [ciling_tex_y * TEXTURE_SIZE + ciling_tex_x];
+                uint32_t pixel = state.textures.data[((state.texture_map[(int)y_cord / GRID_SIZE][(int)x_cord / GRID_SIZE]) / 100) % 10][ciling_tex_y * TEXTURE_SIZE + ciling_tex_x];
 
                 uint8_t r = (pixel >> 16) & 0xFF;
                 uint8_t g = (pixel >> 8) & 0xFF;
