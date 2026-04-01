@@ -7,6 +7,7 @@
 #define RENDER_H 450
 #define MAP_W 8
 #define MAP_H 16
+#define WALL_SIZE (2 * GRID_SIZE)
 
 
 

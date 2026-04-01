@@ -40,7 +40,7 @@ Optimization Readiness – which is easier to optimize later using SIMD and mult
 * Billboard rendering (objects attached to walls) (planned)
 * Enemy rendering (planned)
 * Bullet rendering (planned)
-* Multiple textures per map (planned)
+* Multiple textures per map (done in DOD)
 * Wall animations (destruction, doors opening, etc.) (planned)
 * DDA optimisation (planed)
 * diagonal walls (planed)
@@ -49,11 +49,11 @@ Optimization Readiness – which is easier to optimize later using SIMD and mult
 **Textures**
 
 * Basic texture generator (done in DOD)
-* Texture loading from images (planned)
+* Texture loading from images (meybe)
 * Texture light precomputation (planned)
 * Normal maps (maybe)
-* Texture editing (maybe)
-* Texture viewer (partly done in DOD)
+* Texture editor (planed)
+* Texture viewer (done in DOD not need afther texture editor )
 
 **Physics**
 
@@ -83,6 +83,7 @@ Multiplayer (PvP and PvE) (maybe)
 
 WebAssembly via Emscripten (planned)
 Linux (Arch + Wayland) (likely)
+mac (unlikely, maybe)
 Android (unlikely, maybe)
 
 ---
@@ -94,7 +95,7 @@ Below are screenshots showing the current state of the engine.
 
 <img width="800" height="476" alt="image" src="https://github.com/user-attachments/assets/9fa41ff8-d6f5-41fb-91b2-a745b5c04ebd" />
 
-<img width="793" height="476" alt="image" src="https://github.com/user-attachments/assets/e21f0048-6036-45a2-aace-91aeacad9ea4" />
+<img width="795" height="480" alt="image" src="https://github.com/user-attachments/assets/53a8c0e8-50c3-4048-9db1-0042bf4ab415" />
 
 <img width="508" height="536" alt="image" src="https://github.com/user-attachments/assets/58c1e6b4-fae7-4b30-96bb-35dc02113d1a" />
 
