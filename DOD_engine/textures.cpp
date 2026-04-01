@@ -42,15 +42,15 @@ void generate_vertical_line_texture(uint32_t* bitmap) {
 }
 
 void generate_grid_line_texture(uint32_t* bitmap) {
-    bool vertical_line = false;
-    bool horizontal_line = false;
+    bool vertical_line = true;
+    bool horizontal_line = true;
     for (int i = 0;i < TEXTURE_SIZE;i++) {
         if (i % 4 == 0)
             vertical_line = !vertical_line;
         for (int j = 0;j < TEXTURE_SIZE;j++) {
 
 
-            if (j % 8 == 0)
+            if (j % 4 == 0)
                 horizontal_line = !horizontal_line;
 
             if (vertical_line || horizontal_line)
