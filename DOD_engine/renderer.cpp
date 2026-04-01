@@ -50,16 +50,15 @@ void render(Game_state& state) {
 
 
 
+        float fade = 1.0f - (distance_to_wall / 500.0f);
+        if (fade < 0) fade = 0;
+
+        float distance;
+        int j = 0;
+            
 
 
-        for (int j = 0;j < state.render_h; j++) {
-            float fade = 1.0f - (distance_to_wall / 500.0f);
-            if (fade < 0) fade = 0;
-
-            float distance;
-
-
-            if (j < ceilling_pixels) {
+            while (j < ceilling_pixels) {
 
                 distance = (((WALL_SIZE - state.player.higth) / (float)GRID_SIZE) * distance_to_wall) / ((state.render_h / 2.0f - j) / ((Greed_pixels)));
 
@@ -94,9 +93,9 @@ void render(Game_state& state) {
 
                 state.framebuffer[i + state.render_w * j] = r << 16 | g << 8 | b;
 
-
+                j++;
             }
-            else if (j < Wall_pixels + ceilling_pixels) {
+            while (j < (Wall_pixels + ceilling_pixels) && j< state.render_h) {
 
 
                 tex_y = (int)TEXTURE_SIZE * (((float)(j - ceilling_pixels)) / (float)Wall_pixels);
@@ -115,8 +114,10 @@ void render(Game_state& state) {
 
                 state.framebuffer[state.render_w * j + i] = r << 16 | g << 8 | b;
 
+                j++;
+
             }
-            else {
+            while (j < state.render_h) {
 
                 distance = ((state.player.higth / (float)GRID_SIZE) * distance_to_wall) / ((j - state.render_h / 2.0f) / Greed_pixels);
 
@@ -147,15 +148,16 @@ void render(Game_state& state) {
 
                 r = (uint8_t)r * fade;
                 g = (uint8_t)g * fade;
-                b = (uint8_t)b *= fade;
+                b = (uint8_t)b * fade;
 
 
                 state.framebuffer[state.render_w * j + i] = r << 16 | g << 8 | b;
 
 
+                j++;
 
             }
-        }
+        
 
 
 
