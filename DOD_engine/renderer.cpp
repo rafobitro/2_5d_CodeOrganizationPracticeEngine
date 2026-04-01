@@ -35,10 +35,12 @@ void render(Game_state& state) {
         }
 
         int total_visable_hight = distance_to_wall * std::tan((VERTICAL_FOV / 2) * PI / 180.f);
-        int Wall_pixels = state.render_h * GRID_SIZE / total_visable_hight;
-        int ceilling_pixels = (state.render_h / 2) - (Wall_pixels / 2);
+        int Wall_pixels = (int)(state.render_h/2) * (WALL_SIZE-state.player.higth) / (total_visable_hight/2.0f);
+        int Greed_pixels= state.render_h * GRID_SIZE / total_visable_hight;
+        int ceilling_pixels = (state.render_h / 2) - (Wall_pixels);
+        Wall_pixels += Greed_pixels / 2;
 
-
+        
 
         int tex_x, tex_y;
 
@@ -60,7 +62,7 @@ void render(Game_state& state) {
 
             if (j < ceilling_pixels) {
 
-                distance = (0.5f * distance_to_wall) / ((state.render_h / 2.0f - j) / Wall_pixels);
+                distance = (((WALL_SIZE-state.player.higth)/(float)GRID_SIZE) * distance_to_wall) / ((state.render_h / 2.0f - j) / ( ( Greed_pixels)));
 
                 fade = 1.0f - (distance / 500.0f);
                 if (fade < 0) fade = 0;
@@ -117,7 +119,7 @@ void render(Game_state& state) {
             }
             else {
 
-                distance = (0.5f * distance_to_wall) / ((j - state.render_h / 2.0f) / Wall_pixels);
+                distance = ((state.player.higth/(float)GRID_SIZE)* distance_to_wall) / ((j - state.render_h / 2.0f) / Greed_pixels);
 
                 fade = 1.0f - (distance / 500.0f);
                 if (fade < 0) fade = 0;
