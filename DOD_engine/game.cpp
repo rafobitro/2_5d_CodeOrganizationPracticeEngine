@@ -11,6 +11,20 @@ void game_update(Game_state& state, Input& input, float delta_time) {
 	float player_angle_change = 0;
 
 
+	if (input.control) {
+		state.player.higth = (int)PLAYER_HIGTH * 0.5f;
+	}
+	else {
+		state.player.higth = (int)PLAYER_HIGTH;
+		if (input.space) {
+			state.player.higth = (int)PLAYER_HIGTH * 1.5f;
+		}
+		else {
+			state.player.higth = (int)PLAYER_HIGTH;
+		}
+	}
+	
+	
 	if (input.turn_left) {
 		player_angle_change -= state.player.rotation_speed;
 	}

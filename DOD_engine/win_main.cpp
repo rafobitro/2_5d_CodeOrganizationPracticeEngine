@@ -156,6 +156,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
         avg_fps = total_frames / sesion_time;
         
 
+
+        if (GetAsyncKeyState(VK_SPACE) & 0x8000) input.space = true;
+        else input.space = false;
+        if (GetAsyncKeyState(VK_CONTROL) & 0x8000) input.control = true;
+        else input.control = false;
         if (GetAsyncKeyState('Q') & 0x8000)  input.turn_left = true;
         else input.turn_left = false;
         if (GetAsyncKeyState('E') & 0x8000)  input.turn_rigth = true;
@@ -168,6 +173,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
         else input.d = false;
         if (GetAsyncKeyState('A') & 0x8000) input.a = true;
         else input.a = false;
+
 
         game_update(state,input,delta_time);
        

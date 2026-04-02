@@ -8,4 +8,6 @@ struct Input {
 	bool d;
 	bool turn_left;
 	bool turn_rigth;
+	bool control;
+	bool space;
 };
