@@ -33,11 +33,18 @@ void render(Game_state& state) {
             ray_x = next_x;
             ray_y = next_y;
         }
+
+// How many world units are visible at distance_to_wall
         int total_visable_hight = distance_to_wall * std::tan((VERTICAL_FOV / 2) * PI / 180.f);
-        int Wall_pixels = (int)(state.render_h / 2) * (WALL_SIZE - state.player.higth) / (total_visable_hight / 2.0f);
-        int Greed_pixels = state.render_h * GRID_SIZE / total_visable_hight;
-        int ceilling_pixels = (state.render_h / 2) - (Wall_pixels);
-        Wall_pixels += Greed_pixels / 2;
+
+// pixels per world unit 
+       int Grid_pixels =(GRID_SIZE /total_visibale_higth)* state.render_h;
+
+//pixels for wall
+        int Wall_pixels = (WALL_SIZE /total_visibale_higth)* state.render_h;
+
+//pixels per ciling
+        int ceilling_pixels = (state.render.h / 2) - (wall_pixels - (state.player_higth / total_visibale_higth) * state.renderer_h)
 
 
 
