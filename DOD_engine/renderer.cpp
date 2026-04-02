@@ -20,7 +20,7 @@ void render(Game_state& state) {
         distance_to_wall = 0;
         hit_vertical_wall = false;
 
-        while (state.map[(int)ray_y / GRID_SIZE][(int)ray_x / GRID_SIZE] == 0) {
+        while (state.map[(int)ray_y / GRID_SIZE][(int)ray_x / GRID_SIZE] == 0 && distance_to_wall< MAX_RENDER_DISTANCE) {
             distance_to_wall++;
             float next_x = ray_x + ray_cos;
             float next_y = ray_y + ray_sin;
@@ -57,7 +57,7 @@ void render(Game_state& state) {
 
 
 
-        float fade = 1.0f - (distance_to_wall / 500.0f);
+        float fade = 1.0f - (distance_to_wall / MAX_RENDER_DISTANCE);
         if (fade < 0) fade = 0;
 
         float distance;
@@ -76,7 +76,7 @@ void render(Game_state& state) {
                 distance = ((WALL_SIZE - state.player.higth) * distance_to_wall) / H;
 
 
-                fade = 1.0f - (distance / 500.0f);
+                fade = 1.0f - (distance / MAX_RENDER_DISTANCE);
                 if (fade < 0) fade = 0;
 
                 float y_cord;
@@ -141,7 +141,7 @@ void render(Game_state& state) {
                 distance = (state.player.higth * distance_to_wall) / H;
                
 
-                fade = 1.0f - (distance / 500.0f);
+                fade = 1.0f - (distance / MAX_RENDER_DISTANCE);
                 if (fade < 0) fade = 0;
 
 

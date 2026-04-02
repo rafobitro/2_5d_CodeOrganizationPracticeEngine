@@ -1,5 +1,5 @@
 #pragma once
-#define GRID_SIZE 64
+#define GRID_SIZE 128
 #define PLAYER_HIGTH (GRID_SIZE*0.5f)
 
 

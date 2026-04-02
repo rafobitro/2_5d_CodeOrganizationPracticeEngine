@@ -1,6 +1,7 @@
 #pragma once
 #define TEXTURE_SIZE 64
 #define MAX_TEXTURES 32
+#define MAX_RENDER_DISTANCE 750.0f
 #define TEXTURE_PIXELS (TEXTURE_SIZE * TEXTURE_SIZE)
 #include <cstdint>
 #include <cmath>
