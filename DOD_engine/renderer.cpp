@@ -38,13 +38,13 @@ void render(Game_state& state) {
         int total_visable_hight = distance_to_wall * std::tan((VERTICAL_FOV / 2) * PI / 180.f);
 
 // pixels per world unit 
-       int Grid_pixels =(GRID_SIZE /total_visibale_higth)* state.render_h;
+       int Grid_pixels =(GRID_SIZE / (float)total_visable_hight)* state.render_h;
 
 //pixels for wall
-        int Wall_pixels = (WALL_SIZE /total_visibale_higth)* state.render_h;
+        int Wall_pixels = (WALL_SIZE / (float)total_visable_hight)* state.render_h;
 
 //pixels per ciling
-        int ceilling_pixels = (state.render.h / 2) - (wall_pixels - (state.player_higth / total_visibale_higth) * state.renderer_h)
+        int ceilling_pixels = (state.render_h / 2) - (Wall_pixels - (state.player.higth / (float)total_visable_hight) * state.render_h);
 
 
 
@@ -63,11 +63,18 @@ void render(Game_state& state) {
         float distance;
         int j = 0;
             
-
+        float H;
 
             while (j < ceilling_pixels) {
 
-                distance = (((WALL_SIZE - state.player.higth) / (float)GRID_SIZE) * distance_to_wall) / ((state.render_h / 2.0f - j) / ((Greed_pixels)));
+                //simular tryangles
+                // h = (WALL_SIZE - state.player.higth);
+                // D = distance_to_wall;
+                 H = ((state.render_h / 2.0f - j) / Grid_pixels)* GRID_SIZE;
+
+
+                distance = ((WALL_SIZE - state.player.higth) * distance_to_wall) / H;
+
 
                 fade = 1.0f - (distance / 500.0f);
                 if (fade < 0) fade = 0;
@@ -126,7 +133,13 @@ void render(Game_state& state) {
             }
             while (j < state.render_h) {
 
-                distance = ((state.player.higth / (float)GRID_SIZE) * distance_to_wall) / ((j - state.render_h / 2.0f) / Greed_pixels);
+                //simular tryangles
+                // h = state.player.higth;
+                // D = distance_to_wall;
+                H = ((j - state.render_h / 2.0f) / Grid_pixels) * GRID_SIZE;
+
+                distance = (state.player.higth * distance_to_wall) / H;
+               
 
                 fade = 1.0f - (distance / 500.0f);
                 if (fade < 0) fade = 0;
