@@ -51,9 +51,9 @@ void render(Game_state& state) {
         int tex_x, tex_y;
 
         if (!hit_vertical_wall)
-            tex_x = (int)TEXTURE_SIZE * ((ray_x / GRID_SIZE) - floor((ray_x / GRID_SIZE)));
+            tex_x = ((int)ray_x & (GRID_SIZE-1)) >> 1;
         else
-            tex_x = (int)TEXTURE_SIZE * ((ray_y / GRID_SIZE) - floor((ray_y / GRID_SIZE)));
+            tex_x = ((int)ray_y & (GRID_SIZE - 1)) >> 1;
 
 
 
@@ -65,6 +65,8 @@ void render(Game_state& state) {
             
         float H;
 
+        
+         
             while (j < ceilling_pixels) {
 
                 //simular tryangles
@@ -87,10 +89,8 @@ void render(Game_state& state) {
                 x_cord = state.player.x + (int)(ray_cos * distance);
                 y_cord = state.player.y + (int)(ray_sin * distance);
 
-                ciling_tex_x = (int)TEXTURE_SIZE * ((x_cord / GRID_SIZE) - floor((x_cord / GRID_SIZE)));
-
-
-                ciling_tex_y = (int)TEXTURE_SIZE * ((y_cord / GRID_SIZE) - floor((y_cord / GRID_SIZE)));
+                ciling_tex_x = ((int)x_cord & (GRID_SIZE - 1)) >> 1;
+                ciling_tex_y = ((int)y_cord & (GRID_SIZE - 1)) >> 1;
 
 
                 uint32_t pixel = state.textures.data[(state.texture_map[(int)y_cord / GRID_SIZE][(int)x_cord / GRID_SIZE]) % 10][ciling_tex_y * TEXTURE_SIZE + ciling_tex_x];
@@ -154,10 +154,8 @@ void render(Game_state& state) {
                 x_cord = state.player.x + (int)(ray_cos * distance);
                 y_cord = state.player.y + (int)(ray_sin * distance);
 
-                ciling_tex_x = (int)TEXTURE_SIZE * ((x_cord / GRID_SIZE) - floor((x_cord / GRID_SIZE)));
-
-
-                ciling_tex_y = (int)TEXTURE_SIZE * ((y_cord / GRID_SIZE) - floor((y_cord / GRID_SIZE)));
+                ciling_tex_x = ((int)x_cord & (GRID_SIZE - 1)) >> 1;
+                ciling_tex_y = ((int)y_cord & (GRID_SIZE - 1)) >> 1;
 
 
                 uint32_t pixel = state.textures.data[((state.texture_map[(int)y_cord / GRID_SIZE][(int)x_cord / GRID_SIZE]) / 100) % 10][ciling_tex_y * TEXTURE_SIZE + ciling_tex_x];
