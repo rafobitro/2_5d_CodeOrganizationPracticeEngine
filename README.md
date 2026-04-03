@@ -49,10 +49,10 @@ Optimization Readiness – which is easier to optimize later using SIMD and mult
 **Textures**
 
 * Basic texture generator (done in DOD)
-* Texture loading from images (meybe)
+* Texture loading from images (done in DOD)
 * Texture light precomputation (planned)
 * Normal maps (maybe)
-* Texture editor (planed)
+* Texture editor (meybe)
 * Texture viewer (done in DOD not need afther texture editor )
 
 **Physics**
@@ -89,15 +89,16 @@ Android (unlikely, maybe)
 ---
 ## Current State
 
-Below are screenshots showing the current state of the engine.
+Below are screenshots showing the current state of the engine. the second image is showing difference between release and debug builds. and render resolution is 800 by 450
 
 
+<img width="798" height="481" alt="image" src="https://github.com/user-attachments/assets/bf288615-c827-452a-b487-62c49ede809e" />
 
-<img width="800" height="476" alt="image" src="https://github.com/user-attachments/assets/9fa41ff8-d6f5-41fb-91b2-a745b5c04ebd" />
+<img width="794" height="473" alt="image" src="https://github.com/user-attachments/assets/da33e46e-16d5-4978-a23d-6db128dbc35f" />
 
 <img width="795" height="480" alt="image" src="https://github.com/user-attachments/assets/53a8c0e8-50c3-4048-9db1-0042bf4ab415" />
 
-<img width="508" height="536" alt="image" src="https://github.com/user-attachments/assets/58c1e6b4-fae7-4b30-96bb-35dc02113d1a" />
+<img width="512" height="541" alt="image" src="https://github.com/user-attachments/assets/9afa4725-9693-43de-99fe-44edc2ad1d68" />
 
 <img width="507" height="537" alt="image" src="https://github.com/user-attachments/assets/dfd0f0d9-031e-4186-a4c1-fb23dd9f2eb5" />
 
