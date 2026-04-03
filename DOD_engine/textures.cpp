@@ -1,5 +1,5 @@
 #include "textures.hpp"
-
+#include <fstream>
 
 void init_Textures(Textures& textures) {
 
@@ -8,7 +8,8 @@ void init_Textures(Textures& textures) {
     generate_horizontal_line_texture(textures.data[1]);
     generate_vertical_line_texture(textures.data[2]);
     generate_grid_line_texture(textures.data[3]);
-    textures.count = 4;
+    load_brick_wall(textures.data[4]);
+    textures.count = 5;
 }
 
 void generate_horizontal_line_texture(uint32_t* bitmap) {
@@ -80,4 +81,28 @@ void generate_gradient_texture(uint32_t* bitmap) {
             bitmap[TEXTURE_SIZE * j + i] = Pixel;
         }
     }
+}
+
+
+
+void load_brick_wall(uint32_t* bitmap) {
+    std::string fullPath = std::string(TEXTURE_PATH) + "Brick_Wall_64x64.bmp";
+
+    FILE* f = fopen(fullPath.c_str(), "rb");
+    if (!f) return;  
+    fseek(f, 138, SEEK_SET);
+
+    for (int i = 0; i < TEXTURE_SIZE * TEXTURE_SIZE; i++) {
+
+        uint8_t b = fgetc(f);
+        uint8_t g = fgetc(f);
+        uint8_t r = fgetc(f);
+        fgetc(f);
+        
+        
+       
+        
+        bitmap[i] = (r << 16) | (g << 8) | b;
+    }
+    fclose(f);
 }

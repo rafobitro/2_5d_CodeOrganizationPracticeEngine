@@ -16,5 +16,6 @@ void generate_gradient_texture(uint32_t* bitmap);
 void generate_horizontal_line_texture(uint32_t* bitmap);
 void generate_vertical_line_texture(uint32_t* bitmap);
 void generate_grid_line_texture(uint32_t* bitmap);
+void load_brick_wall(uint32_t* bitmap);
 
 void init_Textures(Textures& Textures);

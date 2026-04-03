@@ -1,6 +1,5 @@
 #pragma once
 #define PI 3.1415926535f
-#define GRID_SIZE 64
 #define VERTICAL_FOV 90
 #define HORIZONTAL_FOV 90
 
