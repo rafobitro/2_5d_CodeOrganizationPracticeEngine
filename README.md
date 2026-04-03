@@ -36,7 +36,7 @@ Optimization Readiness – which is easier to optimize later using SIMD and mult
 * Wall texture mapping (done in DOD)
 * Floor and ceiling texture mapping (done in DOD)
 * Distance-based fade lighting (done in DOD)
-* Dynamic lighting (planned)
+* Dynamic lighting (meybe)
 * Billboard rendering (objects attached to walls) (planned)
 * Enemy rendering (planned)
 * Bullet rendering (meybe)
@@ -49,7 +49,7 @@ Optimization Readiness – which is easier to optimize later using SIMD and mult
 
 * Basic texture generator (done in DOD)
 * Texture loading from images BMP (done in DOD)
-* Texture light precomputation (planned)
+* Texture light precomputation (meybe)
 * Normal maps (maybe)
 * Texture editor (meybe)
 * Texture viewer (done in DOD not need afther texture editor )
