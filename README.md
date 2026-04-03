@@ -39,17 +39,16 @@ Optimization Readiness – which is easier to optimize later using SIMD and mult
 * Dynamic lighting (planned)
 * Billboard rendering (objects attached to walls) (planned)
 * Enemy rendering (planned)
-* Bullet rendering (planned)
+* Bullet rendering (meybe)
+* player height change (done in DOD)
 * Multiple textures per map (done in DOD)
-* Wall animations (destruction, doors opening, etc.) (planned)
+* Wall animations (destruction, doors opening, etc.) (meybe)
 * DDA optimisation (planed)
-* diagonal walls (planed)
-* deferent wall hgth and higth change (planed)
 
 **Textures**
 
 * Basic texture generator (done in DOD)
-* Texture loading from images (done in DOD)
+* Texture loading from images BMP (done in DOD)
 * Texture light precomputation (planned)
 * Normal maps (maybe)
 * Texture editor (meybe)
@@ -57,7 +56,7 @@ Optimization Readiness – which is easier to optimize later using SIMD and mult
 
 **Physics**
 
-* Ball physics (bullets that can bounce and interact in 3D space) (planned)
+* Ball physics (bullets that can bounce and interact in 3D space) (meybe )
 * Collision detection (partly done in DOD)
   
 **System**
@@ -67,24 +66,25 @@ Optimization Readiness – which is easier to optimize later using SIMD and mult
 * Frame cap (planned)
 * Input abstraction from Windows API (done in DOD)
 * Renderer abstraction from Windows API (done in DOD)
-* Sound system (planned)
+* Sound system (meybe)
 * UI (health bar, FPS counter, weapon view) (partly done in DOD)
 * Networking for multiplayer (maybe)
 
 **Game**
 
-Enemy AI (planned)
-Basic game logic (start, death, respawn, win) (planned)
-Map editor (planned)
-Map generator (planned)
-Multiplayer (PvP and PvE) (maybe)
+* Enemy AI (planned)
+* Basic game logic (start, death, respawn, win) (planned)
+* advanced game logic (surviorlike gameplay) (meybe)
+* Map editor (planned)
+* Map generator (meybe)
+* Multiplayer (PvP and PvE) (maybe)
 
 **Ports**
 
-WebAssembly via Emscripten (planned)
-Linux (Arch + Wayland) (likely)
-mac (unlikely, maybe)
-Android (unlikely, maybe)
+* WebAssembly via Emscripten (planned)
+* Linux (Arch + Wayland) (likely, meybe)
+* mac (unlikely, maybe)
+* Android (unlikely, maybe)
 
 ---
 ## Current State
@@ -149,4 +149,10 @@ Note d is not distance from player eye to the pixel of the (ceiling/ floor) it i
 delta time is much easier than I thought i just need to measure time of each frame in second and multiplay to a game logic speed which is game units per second 
 
 game UI is overlay on top of the game renderer and it is working by modiflying part of the bitmap acording to the input like location and size of the input i added overflow to independed from a location even if the thing is not fit it would not cause a crash. Also i usued used coordinate abstraction to calculate cordinates independed from resolution . And I used Daniel Helper's font ` 8x8 basic.h` for the ASCII bitmaps.
+
+BMP loading is simple and complex at the same time. While reading about BMP files, I found a lot of conflicting information. Some sources say the bitmap data starts at byte 54, others say 150, and some mention different offsets entirely. There is also confusion about color formats: some use 4-byte RGBA, others 3-byte RGB, and some store colors in BGR order instead of RGB.
+
+So I started experimenting, iterating and changing different things until I could see part of the image. Once I figured out where the image data actually starts, things became clearer. In my case, almost nothing I found online matched. My BMP images used 4-byte BGRA format and the data started at byte 134.
+
+In the end, I kept it simple. I read from the file, adjusted offsets until the image appeared correctly, and identified the color format visually. The loader itself is less than 10 lines. I also skipped the alpha channel, since it was not needed for the textures created by 711studios.
 
