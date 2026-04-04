@@ -9,6 +9,8 @@ add_executable(DOD_engine WIN32
     DOD_engine/renderer.cpp 
     DOD_engine/textures.cpp
     DOD_engine/UI_renderer.cpp
+    DOD_engine/trig_tables.cpp
+
  "DOD_engine/UI_renderer.cpp")
 
 

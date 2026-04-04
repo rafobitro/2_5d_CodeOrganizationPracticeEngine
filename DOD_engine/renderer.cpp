@@ -17,9 +17,10 @@ void render(Game_state& state) {
         ray_angle += angle_step;
         ray_x = state.player.x;
         ray_y = state.player.y;
-        ray_rad = ray_angle * ANGLE_TO_RADIAN;
-        ray_cos = cos(ray_rad);
-        ray_sin = sin(ray_rad);
+        int index = ((int)(ray_angle * ANGLE_MULTIPLIER)) % (int)STEPS;
+        if (index < 0) index += STEPS;
+        ray_cos = cos_table[index];
+        ray_sin = sin_table[index];
 
         distance_to_wall = 0;
         hit_vertical_wall = false;

@@ -4,6 +4,8 @@
 #include "renderer.hpp"
 #include "UI_renderer.hpp"
 #include "input.hpp"
+#include "trig_tables.hpp"
+
 
 #include <windows.h>
 #include <cstdint>
@@ -132,6 +134,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
     MSG msg = {0};
 
     Input input;
+
+    build_trig_tables();
 
     while (running) {
         while (PeekMessageW(&msg, NULL, 0, 0, PM_REMOVE)) {
