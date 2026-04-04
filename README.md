@@ -44,6 +44,7 @@ Optimization Readiness – which is easier to optimize later using SIMD and mult
 * Multiple textures per map (done in DOD)
 * Wall animations (destruction, doors opening, etc.) (meybe)
 * DDA optimisation (planed)
+* Use trigonometric precompute (done in DOD)
 
 **Textures**
 
