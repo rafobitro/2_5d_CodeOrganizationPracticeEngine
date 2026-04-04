@@ -12,8 +12,11 @@ void init_Textures(Textures& textures) {
     bmp_loader(textures.data[4], "Brick_Wall_64x64.bmp");
     bmp_loader(textures.data[5], "Brick_Wall_Cracked_64x64.bmp");
     bmp_loader(textures.data[6], "Metal_Floor_64x64.bmp");
-    bmp_loader(textures.data[7], "Wooden_Floor_Vertical_64x64.bmp");
-    textures.count = 8;
+    bmp_loader(textures.data[7], "Rocky_Road_64x64.bmp");
+    bmp_loader(textures.data[8], "Wooden_Floor_Vertical_64x64.bmp");
+    bmp_loader(textures.data[9], "Wooden_Floor_Horizontal_64x64.bmp");
+
+    textures.count = 10;
 }
 
 void generate_horizontal_line_texture(uint32_t* bitmap) {

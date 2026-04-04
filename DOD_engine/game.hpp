@@ -1,13 +1,9 @@
 #pragma once
-#define TEXTURE_GRADIENT 0
-#define TEXTURE_VERTICAL 1
-#define TEXTURE_HORIZONTAL 2
-#define TEXTURE_GRID 3
 #define RENDER_W 800
 #define RENDER_H 450
 #define MAP_W 8
 #define MAP_H 16
-#define WALL_SIZE (2 * GRID_SIZE)
+#define WALL_SIZE (1 * GRID_SIZE)
 
 
 
