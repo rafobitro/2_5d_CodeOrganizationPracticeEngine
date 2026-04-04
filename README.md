@@ -37,7 +37,7 @@ Optimization Readiness – which is easier to optimize later using SIMD and mult
 * Floor and ceiling texture mapping (done in DOD)
 * Distance-based fade lighting (done in DOD)
 * Dynamic lighting (meybe)
-* Billboard rendering (objects attached to walls) (planned)
+* Billboard rendering (objects attached to walls) (meybe)
 * Enemy rendering (planned)
 * Bullet rendering (meybe)
 * player height change (done in DOD)
@@ -62,7 +62,7 @@ Optimization Readiness – which is easier to optimize later using SIMD and mult
   
 **System**
 
-* Double buffering (planned)
+* Double buffering (meybe)
 * Delta time (done in DOD)
 * Frame cap (planned)
 * Input abstraction from Windows API (done in DOD)
