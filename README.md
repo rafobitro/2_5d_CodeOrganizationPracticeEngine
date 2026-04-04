@@ -93,9 +93,9 @@ Optimization Readiness – which is easier to optimize later using SIMD and mult
 Below are screenshots showing the current state of the engine. the second image is showing difference between release and debug builds. and render resolution is 800 by 450
 
 
-<img width="798" height="481" alt="image" src="https://github.com/user-attachments/assets/bf288615-c827-452a-b487-62c49ede809e" />
+<img width="796" height="479" alt="image" src="https://github.com/user-attachments/assets/1c45c4a5-17e2-4758-a171-fc0b5ef54dc4" />
 
-<img width="794" height="473" alt="image" src="https://github.com/user-attachments/assets/da33e46e-16d5-4978-a23d-6db128dbc35f" />
+<img width="799" height="478" alt="image" src="https://github.com/user-attachments/assets/b1e8eaf3-165e-4b72-830c-cc593db85f6d" />
 
 <img width="795" height="480" alt="image" src="https://github.com/user-attachments/assets/53a8c0e8-50c3-4048-9db1-0042bf4ab415" />
 
