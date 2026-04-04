@@ -1,5 +1,6 @@
 
 #include "renderer.hpp"
+#include "trig_tables.hpp"
 
 
 void render(Game_state& state) {
@@ -8,15 +9,18 @@ void render(Game_state& state) {
     float ray_x, ray_y, ray_rad, ray_cos, ray_sin;
     int distance_to_wall;
     bool hit_vertical_wall;
+
+    float tan_FOV = tan((VERTICAL_FOV / 2) * ANGLE_TO_RADIAN);
     //raycaster
 
     for (int i = 0;i < state.render_w;i++) {
         ray_angle += angle_step;
         ray_x = state.player.x;
         ray_y = state.player.y;
-        ray_rad = ray_angle * PI / 180.0f;
+        ray_rad = ray_angle * ANGLE_TO_RADIAN;
         ray_cos = cos(ray_rad);
         ray_sin = sin(ray_rad);
+
         distance_to_wall = 0;
         hit_vertical_wall = false;
 
@@ -35,7 +39,7 @@ void render(Game_state& state) {
         }
 
 // How many world units are visible at distance_to_wall
-        int total_visable_hight = distance_to_wall * std::tan((VERTICAL_FOV / 2) * PI / 180.f);
+        int total_visable_hight = distance_to_wall * tan_FOV;
 
 // pixels per world unit 
        int Grid_pixels =(GRID_SIZE / (float)total_visable_hight)* state.render_h;
@@ -112,7 +116,7 @@ void render(Game_state& state) {
             while (j < (Wall_pixels + ceilling_pixels) && j< state.render_h) {
 
 
-                tex_y = (int)TEXTURE_SIZE * (((float)(j - ceilling_pixels)) / (float)Wall_pixels);
+                tex_y = (int)TEXTURE_SIZE * (((float)(j - ceilling_pixels)) / Wall_pixels);
 
 
                 uint32_t pixel = state.textures.data [((state.texture_map[(int)ray_y / GRID_SIZE][(int)ray_x / GRID_SIZE]) / 10) % 10][tex_y * TEXTURE_SIZE + tex_x];
