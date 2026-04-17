@@ -26,10 +26,51 @@ void render(Game_state& state) {
         distance_to_wall = 0;
         hit_vertical_wall = false;
 
+        float x_step;
+        float y_step;
+        int step;
+
+        float next_x;
+        float next_y;
+
         while (state.map[(int)ray_y / GRID_SIZE][(int)ray_x / GRID_SIZE] == 0 && distance_to_wall< MAX_RENDER_DISTANCE) {
-            distance_to_wall++;
-            float next_x = ray_x + ray_cos;
-            float next_y = ray_y + ray_sin;
+            
+         if (ray_cos>=0)
+            x_step = GRID_SIZE - fmod(ray_x, GRID_SIZE);
+         else 
+            x_step = fmod(ray_x, GRID_SIZE);
+
+         if (ray_sin >= 0)
+             y_step = GRID_SIZE - fmod(ray_y, GRID_SIZE);
+         else
+             y_step = fmod(ray_y, GRID_SIZE);
+            
+
+            x_step /= (ray_cos + EPSILON );
+            y_step /= (ray_sin + EPSILON );
+
+            x_step = abs(x_step);
+            y_step = abs(y_step);
+
+            if (x_step == 0 )x_step = GRID_SIZE;
+            if (y_step == 0)y_step = GRID_SIZE;
+
+            
+            if (x_step >= y_step)
+                step = y_step;
+            else 
+                step = x_step;
+
+            if (step == 0)
+                step = 1;
+
+
+
+
+            distance_to_wall += step;
+            next_x = ray_x + ray_cos * step;
+            next_y = ray_y + ray_sin * step;
+
 
             if ((int)next_x / GRID_SIZE != (int)ray_x / GRID_SIZE)
                 hit_vertical_wall = true;
