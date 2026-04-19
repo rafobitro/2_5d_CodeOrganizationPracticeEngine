@@ -34,6 +34,8 @@ if(EMSCRIPTEN )
         TEXTURE_PATH="${CMAKE_CURRENT_SOURCE_DIR}/external/textures/"
     )
 
+    add_compile_options(-Wno-narrowing)
+
     set_target_properties(DOD_engine_web PROPERTIES
         SUFFIX ".html"
         LINK_FLAGS "-s USE_SDL=2 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 --shell-file ${CMAKE_CURRENT_SOURCE_DIR}/shell.html"

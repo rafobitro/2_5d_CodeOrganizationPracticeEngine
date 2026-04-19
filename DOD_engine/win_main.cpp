@@ -193,10 +193,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
         ReleaseDC(hwnd, dc);
     }
 
-
     free(state.framebuffer);
-    
- 
 
     return 0; 
 }
