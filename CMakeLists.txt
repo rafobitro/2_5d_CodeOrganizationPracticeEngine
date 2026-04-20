@@ -24,8 +24,6 @@ if(EMSCRIPTEN )
         TEXTURE_PATH="${CMAKE_CURRENT_SOURCE_DIR}/external/textures/"
     )
 
-    add_compile_options(-Wno-narrowing)
-
     set_target_properties(DOD_engine_web PROPERTIES
     SUFFIX ".html"
     LINK_FLAGS "-s WASM=2 -s ALLOW_MEMORY_GROWTH=1 -s EXPORTED_RUNTIME_METHODS=['HEAPU8']"

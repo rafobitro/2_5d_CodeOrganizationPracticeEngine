@@ -8,7 +8,7 @@ void render(Game_state& state) {
     float ray_angle = (state.player.angle - HORIZONTAL_FOV / 2.0f);
     float angle_step = (1.0f / state.render_w) * HORIZONTAL_FOV;
     float ray_x, ray_y, ray_rad, ray_cos, ray_sin;
-    int distance_to_wall;
+    float distance_to_wall;
     bool hit_vertical_wall;
 
     float tan_FOV = tan((VERTICAL_FOV / 2) * ANGLE_TO_RADIAN);
@@ -28,7 +28,7 @@ void render(Game_state& state) {
 
         float x_step;
         float y_step;
-        int step;
+        float step;
 
         float next_x;
         float next_y;
@@ -46,25 +46,20 @@ void render(Game_state& state) {
              y_step = fmod(ray_y, GRID_SIZE);
             
 
-            x_step /= (ray_cos + EPSILON );
-            y_step /= (ray_sin + EPSILON );
+            x_step /= (ray_cos  + EPSILON);
+            y_step /= (ray_sin + EPSILON);
 
-            x_step = abs(x_step);
-            y_step = abs(y_step);
-
-            if (x_step == 0 )x_step = GRID_SIZE;
-            if (y_step == 0)y_step = GRID_SIZE;
-
+            if (x_step < 0)x_step *= -1;
+            if (y_step < 0)y_step *= -1;
+            
             
             if (x_step >= y_step)
                 step = y_step;
             else 
                 step = x_step;
 
-            if (step == 0)
-                step = 1;
-
-
+            if (step <0.01 )
+                step = 0.01;
 
 
             distance_to_wall += step;
@@ -82,16 +77,16 @@ void render(Game_state& state) {
         }
 
 // How many world units are visible at distance_to_wall
-        int total_visable_hight = distance_to_wall * tan_FOV;
+        float total_visable_hight = distance_to_wall * tan_FOV;
 
 // pixels per world unit 
-       int Grid_pixels =(GRID_SIZE / (float)total_visable_hight)* state.render_h;
+       int Grid_pixels =(GRID_SIZE / total_visable_hight)* state.render_h;
 
 //pixels for wall
-        int Wall_pixels = (WALL_SIZE / (float)total_visable_hight)* state.render_h;
+        int Wall_pixels = (WALL_SIZE / (total_visable_hight))* state.render_h;
 
 //pixels per ciling
-        int ceilling_pixels = (state.render_h / 2) - (Wall_pixels - (state.player.higth / (float)total_visable_hight) * state.render_h);
+        int ceilling_pixels = (state.render_h / 2) - (Wall_pixels - (state.player.higth / total_visable_hight) * state.render_h);
 
 
 

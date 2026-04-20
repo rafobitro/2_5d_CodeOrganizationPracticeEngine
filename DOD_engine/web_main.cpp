@@ -42,7 +42,7 @@ EM_JS(void, render_to_canvas, (uint32_t* buffer_ptr, int width, int height), {
     imgData.data.set(src);
 
 
-    //swaap 0RGB to BGRA
+    //swap RGB to BGRA
     for (let i = 0; i < imgData.data.length; i += 4) {
         imgData.data[i + 3] = imgData.data[i];
         imgData.data[i] = imgData.data[i+2];
