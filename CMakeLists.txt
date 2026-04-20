@@ -18,18 +18,8 @@ if(EMSCRIPTEN )
     )
 
 
-    add_executable(texture_viewer_web
-        DOD_engine/web_texture_vewer.cpp
-        DOD_engine/textures.cpp
-    )
-
     target_include_directories(DOD_engine_web PRIVATE external)
-    target_include_directories(texture_viewer_web PRIVATE external)
-
-    target_compile_definitions(texture_viewer_web PRIVATE 
-        TEXTURE_PATH="${CMAKE_CURRENT_SOURCE_DIR}/external/textures/"
-    )
-
+  
     target_compile_definitions(DOD_engine_web PRIVATE 
         TEXTURE_PATH="${CMAKE_CURRENT_SOURCE_DIR}/external/textures/"
     )
@@ -37,14 +27,10 @@ if(EMSCRIPTEN )
     add_compile_options(-Wno-narrowing)
 
     set_target_properties(DOD_engine_web PROPERTIES
-        SUFFIX ".html"
-        LINK_FLAGS "-s USE_SDL=2 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 --shell-file ${CMAKE_CURRENT_SOURCE_DIR}/shell.html"
+    SUFFIX ".html"
+    LINK_FLAGS "-s WASM=2 -s ALLOW_MEMORY_GROWTH=1 -s EXPORTED_RUNTIME_METHODS=['HEAPU8']"
     )
-
-    set_target_properties(texture_viewer_web PROPERTIES
-        SUFFIX ".html"
-        LINK_FLAGS "-s USE_SDL=2 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 --shell-file ${CMAKE_CURRENT_SOURCE_DIR}/shell.html"
-    )
+   
 
 
 else()

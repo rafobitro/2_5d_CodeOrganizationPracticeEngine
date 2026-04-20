@@ -3,7 +3,7 @@
 
 void init_Textures(Textures& textures) {
 
-    
+
     generate_gradient_texture(textures.data[0]);
     generate_horizontal_line_texture(textures.data[1]);
     generate_vertical_line_texture(textures.data[2]);
@@ -90,7 +90,7 @@ void generate_gradient_texture(uint32_t* bitmap) {
     }
 }
 
-void bmp_loader(uint32_t* bitmap , std::string path) {
+void bmp_loader(uint32_t* bitmap, std::string path) {
 
     std::string fullPath = std::string(TEXTURE_PATH) + path;
 

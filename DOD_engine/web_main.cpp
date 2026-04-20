@@ -31,20 +31,27 @@ EM_JS(void, render_to_canvas, (uint32_t* buffer_ptr, int width, int height), {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
 
-    ctx.fillStyle = "yellow";
-    ctx.fillRect(139, 10, 50, 50);
+    if (canvas.width !== width || canvas.height !== height) {
+        canvas.width = width;
+        canvas.height = height;
+    }
 
     const imgData = ctx.createImageData(width, height);
     const src = Module.HEAPU8.subarray(buffer_ptr, buffer_ptr + (width * height * 4));
 
     imgData.data.set(src);
 
-    for (let i = 3; i < imgData.data.length; i += 4) {
-        imgData.data[i] = 255;
+
+    //swaap 0RGB to BGRA
+    for (let i = 0; i < imgData.data.length; i += 4) {
+        imgData.data[i + 3] = imgData.data[i];
+        imgData.data[i] = imgData.data[i+2];
+        imgData.data[i + 2] = imgData.data[i + 3];
+        imgData.data[i + 3] = 255;
     }
 
     ctx.putImageData(imgData, 0, 0);
-    });
+});
 
 
 EM_BOOL key_down(int type, const EmscriptenKeyboardEvent* e, void* data) {
@@ -69,7 +76,7 @@ EM_BOOL key_up(int type, const EmscriptenKeyboardEvent* e, void* data) {
 
 void main_loop() {
     double current_time = emscripten_get_now();
-    float delta_time = (float)(current_time - last_time) / 1000.0f;
+    float delta_time = (float)(current_time - last_time) / 1000.f;
     session_time += delta_time;
     last_time = current_time;
     total_frames++;
@@ -87,17 +94,10 @@ void main_loop() {
     render(state);
     UI_renderer(state, current_fps, avg_fps);
 
-
-
-    for (int i = 0; i < state.render_w * state.render_h; i++)
-        state.framebuffer[i] = 0x000000;
-
     render_to_canvas(state.framebuffer, state.render_w, state.render_h);
 }
 
 int main() {
-    state.render_h = 400;
-    state.render_w = 800;
     init_Player(state.player);
     init_Textures(state.textures);
     build_trig_tables();
