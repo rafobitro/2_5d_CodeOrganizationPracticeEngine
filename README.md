@@ -44,7 +44,7 @@ Optimization Readiness – which is easier to optimize later using SIMD and mult
 * player height change (done in DOD)
 * Multiple textures per map (done in DOD)
 * Wall animations (destruction, doors opening, etc.) (meybe)
-* DDA optimisation (planed)
+* DDA optimisation (done in DOD)
 * Use trigonometric precompute (done in DOD)
 
 **Textures**
@@ -83,7 +83,7 @@ Optimization Readiness – which is easier to optimize later using SIMD and mult
 
 **Ports**
 
-* WebAssembly via Emscripten (planned)
+* WebAssembly via Emscripten (done in DOD)
 * Linux (Arch + Wayland) (likely, meybe)
 * mac (unlikely, maybe)
 * Android (unlikely, maybe)
@@ -104,16 +104,31 @@ Below are screenshots showing the current state of the engine. the second image 
 
 <img width="507" height="537" alt="image" src="https://github.com/user-attachments/assets/dfd0f0d9-031e-4186-a4c1-fb23dd9f2eb5" />
 
+---          
+Below is WASM port running in Firefox browser (does not support loaded textures yet)
 
+<img width="809" height="568" alt="image" src="https://github.com/user-attachments/assets/63068ba4-8602-4d86-bc40-84769471ab3d" />
 
 
 ---
 ## Build Instructions
 
-Currently works on Windows and requires CMake and a Microsoft's C++ compiler(cl).
+Windows build requires CMake and C++ compiler.
 ```
 cmake -B build
 cmake --build build
+```
+and then run executable 
+
+WebAssembly build requires CMake, C++ compiler, Python, and Emscripten.
+
+```
+emcmake cmake -B build_web
+cmake --build build_web
+cd build_web
+python -m http.server 8080
+// and then put this link in the browser
+http://localhost:8080/DOD_engine_web.html
 ```
 
 ---
@@ -159,3 +174,19 @@ So, the verdict is this: different BMP files can have different structures. I am
 
 In the end, I kept it simple. I read from the file, adjusted offsets until the image appeared correctly, and identified the color format visually. The loader itself is less than 10 lines. I also skipped the alpha channel, since it was not needed for the textures created by 711studios.
 
+The DDA algorithm is an optimization algorithm where, instead of increasing the ray step by step, it increases the ray size by the exact length needed to cross the next grid line.
+The step is calculated as GRID_SIZE - ray % GRID_SIZE if the x or y component is in the positive direction, and ray % GRID_SIZE otherwise. The absolute value is taken. Then it is divided by the unit vector of the step, in this case, ray_cos and ray_sin.
+The smallest of the two values is chosen, and this represents the number of steps needed to cross the line.
+There is an edge case when the step is 0. This can cause an infinite loop. To fix this, if the step is 0, I force a minimum step of 1 to avoid getting stuck.
+
+Porting to WebAssembly was harder than I expected, but easier than others suggested. This is because the web is very different from native platforms.
+I used Emscripten to compile C++ to WebAssembly. It also generated a basic HTML file.
+Browsers do not handle input in real time. Instead, they send events.
+ To support browser input, I implemented simple checks: if a button is pressed, it is marked as pressed; otherwise, it is not. This part was easy.
+Rendering was the hardest part. I needed to share a chunk of C++ memory with JavaScript. To do this, I first had to enable the correct permissions in CMake. Then I passed two values to JavaScript: the start and end of the framebuffer. Using Emscripten boilerplate code, I transferred the data and converted my RGB format to the web’s BGRA format by setting the alpha channel to 255 and swapping the red and blue channels.
+File loading is different on the web. It does not use a standard file system, so assets must either be embedded into the executable or handled using Emscripten’s file system. I am not using either yet.
+Also, it must be started differently. I cannot just open the HTML file. I need to run a web server. I used:
+python -m http.server 8080
+
+I also used the default Emscripten HTML template, which includes the Emscripten logo. I may change it later and write my own HTML.
+Performance on the web is worse and not close to native, as was expected.
