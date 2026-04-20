@@ -1,5 +1,6 @@
 
 #define PI 3.1415926535f
+#include <cmath>
 #include "game.hpp"
 
 

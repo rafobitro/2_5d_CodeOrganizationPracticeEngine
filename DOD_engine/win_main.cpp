@@ -1,15 +1,17 @@
 #include "game.hpp"
 #include "player.hpp"
-#include "textures.hpp"
 #include "renderer.hpp"
 #include "UI_renderer.hpp"
 #include "input.hpp"
 #include "trig_tables.hpp"
+#include "assets.h"
+
+
 
 
 #include <windows.h>
-#include <cstdint>
 #include <cmath>
+
 #include <chrono>
 
 bool running = true;
@@ -74,7 +76,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
     
     Game_state state;
     init_Player(state.player);
-    init_Textures(state.textures);
+    memcpy(state.textures, data, sizeof(data));
     state.framebuffer = (uint32_t*)malloc(4 * state.render_w * state.render_h);
 
     //populate BITMAPINFO

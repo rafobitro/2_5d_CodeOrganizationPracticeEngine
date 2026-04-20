@@ -1,6 +1,6 @@
 #include "game.hpp"
 #include "player.hpp"
-#include "textures.hpp"
+#include "assets.h"
 #include "renderer.hpp"
 #include "UI_renderer.hpp"
 #include "input.hpp"
@@ -94,7 +94,7 @@ void main_loop() {
         uint8_t b = (state.framebuffer[i]) & 0xFF;
 
         // swaping RGB to ABGR for web 
-        state.framebuffer[i] = (a <<24) | (b << 16) | (g << 8) | r ;
+        state.framebuffer[i] = (255 <<24) | (b << 16) | (g << 8) | r ;
     }
 
     render_to_canvas(state.framebuffer, state.render_w, state.render_h);
@@ -102,7 +102,7 @@ void main_loop() {
 
 int main() {
     init_Player(state.player);
-    init_Textures(state.textures);
+    memcpy(state.textures, data, sizeof(data));
     build_trig_tables();
     
     state.framebuffer = (uint32_t*)malloc(4 * state.render_w * state.render_h);

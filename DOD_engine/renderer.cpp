@@ -135,7 +135,7 @@ void render(Game_state& state) {
                 ciling_tex_y = ((int)y_cord & (GRID_SIZE - 1)) >> 1;
 
 
-                uint32_t pixel = state.textures.data[(state.texture_map[(int)y_cord / GRID_SIZE][(int)x_cord / GRID_SIZE]) % 10][ciling_tex_y * TEXTURE_SIZE + ciling_tex_x];
+                uint32_t pixel = state.textures[(state.texture_map[(int)y_cord / GRID_SIZE][(int)x_cord / GRID_SIZE]) % 10][ciling_tex_y * TEXTURE_SIZE + ciling_tex_x];
 
                 //uint32_t pixel = 0xFF0000;
                 uint8_t r = (pixel >> 16) & 0xFF;
@@ -157,7 +157,7 @@ void render(Game_state& state) {
                 tex_y = (int)TEXTURE_SIZE * (((float)(j - ceilling_pixels)) / Wall_pixels);
 
 
-                uint32_t pixel = state.textures.data [((state.texture_map[(int)ray_y / GRID_SIZE][(int)ray_x / GRID_SIZE]) / 10) % 10][tex_y * TEXTURE_SIZE + tex_x];
+                uint32_t pixel = state.textures [((state.texture_map[(int)ray_y / GRID_SIZE][(int)ray_x / GRID_SIZE]) / 10) % 10][tex_y * TEXTURE_SIZE + tex_x];
 
                 uint8_t r = (pixel >> 16) & 0xFF;
                 uint8_t g = (pixel >> 8) & 0xFF;
@@ -200,7 +200,7 @@ void render(Game_state& state) {
                 ciling_tex_y = ((int)y_cord & (GRID_SIZE - 1)) >> 1;
 
 
-                uint32_t pixel = state.textures.data[((state.texture_map[(int)y_cord / GRID_SIZE][(int)x_cord / GRID_SIZE]) / 100) % 10][ciling_tex_y * TEXTURE_SIZE + ciling_tex_x];
+                uint32_t pixel = state.textures[((state.texture_map[(int)y_cord / GRID_SIZE][(int)x_cord / GRID_SIZE]) / 100) % 10][ciling_tex_y * TEXTURE_SIZE + ciling_tex_x];
 
                 uint8_t r = (pixel >> 16) & 0xFF;
                 uint8_t g = (pixel >> 8) & 0xFF;
