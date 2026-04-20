@@ -16,7 +16,7 @@
 
 
 Game_state state;
-Input input = { 0 };
+Input input;
 
 double last_time = 0;
 int total_frames = 0;
@@ -40,15 +40,6 @@ EM_JS(void, render_to_canvas, (uint32_t* buffer_ptr, int width, int height), {
     const src = Module.HEAPU8.subarray(buffer_ptr, buffer_ptr + (width * height * 4));
 
     imgData.data.set(src);
-
-
-    //swap RGB to BGRA
-    for (let i = 0; i < imgData.data.length; i += 4) {
-        imgData.data[i + 3] = imgData.data[i];
-        imgData.data[i] = imgData.data[i+2];
-        imgData.data[i + 2] = imgData.data[i + 3];
-        imgData.data[i + 3] = 255;
-    }
 
     ctx.putImageData(imgData, 0, 0);
 });
@@ -93,6 +84,18 @@ void main_loop() {
     game_update(state, input, delta_time);
     render(state);
     UI_renderer(state, current_fps, avg_fps);
+
+    //swap RGB to BGRA
+    for (int i = 0; i < state.render_w * state.render_h  ; i += 1) {
+
+        
+        uint8_t r = (state.framebuffer[i] >> 16) & 0xFF;
+        uint8_t g = (state.framebuffer[i] >> 8) & 0xFF;
+        uint8_t b = (state.framebuffer[i]) & 0xFF;
+
+        // swaping RGB to ABGR for web 
+        state.framebuffer[i] = (a <<24) | (b << 16) | (g << 8) | r ;
+    }
 
     render_to_canvas(state.framebuffer, state.render_w, state.render_h);
 }
