@@ -197,3 +197,5 @@ Also, it must be started differently. I cannot just open the HTML file. I need t
 
 I also used the default Emscripten HTML template, which includes the Emscripten logo. I may change it later and write my own HTML.
 Performance on the web was worse than native but better than I expected. 
+
+Today during testing I found that the program was not working in Chrome. The WASM build worked in Firefox, Microsoft Edge, and Brave, but not in Chrome. Chrome reported a memory access violation, and I spent over an hour debugging without finding any issues in the code.After switching to a different device (laptop), the program worked correctly. After further investigation using Chrome inspect, I discovered that Chrome was not loading the latest uploaded files for some reason. Clearing the cache solved the issue.
