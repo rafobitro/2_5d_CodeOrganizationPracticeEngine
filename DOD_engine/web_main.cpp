@@ -92,9 +92,10 @@ void main_loop() {
         uint8_t r = (state.framebuffer[i] >> 16) & 0xFF;
         uint8_t g = (state.framebuffer[i] >> 8) & 0xFF;
         uint8_t b = (state.framebuffer[i]) & 0xFF;
+        uint8_t a = 255;
 
         // swaping RGB to ABGR for web 
-        state.framebuffer[i] = (255 <<24) | (b << 16) | (g << 8) | r ;
+        state.framebuffer[i] = (a <<24) | (b << 16) | (g << 8) | r ;
     }
 
     render_to_canvas(state.framebuffer, state.render_w, state.render_h);
@@ -111,8 +112,6 @@ int main() {
     emscripten_set_keyup_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, nullptr, true, key_up);
 
     emscripten_set_main_loop(main_loop, 0, 1);
-
-    free(state.framebuffer);
 
     return 0;
 }

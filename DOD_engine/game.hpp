@@ -17,7 +17,7 @@ struct Game_state {
     int render_w = RENDER_W;
     int render_h = RENDER_H;
     Player player;
-    uint32_t textures[TEXTURES_COUNT][TEXTURE_SIZE];
+    uint32_t textures[TEXTURES_COUNT][TEXTURE_BUFFER_SIZE];
     uint32_t* framebuffer;
 
     int texture_map[MAP_H][MAP_W] = {

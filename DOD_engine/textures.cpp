@@ -123,7 +123,7 @@ void export_assets(Textures& textures, std::string path) {
     std::ofstream out2(fullpath2);
 
 
-    out2 << "#define TEXTURE_SIZE " << TEXTURE_PIXELS << "\n";
+    out2 << "#define TEXTURE_BUFFER_SIZE " << TEXTURE_PIXELS << "\n";
     out2 << "#define TEXTURES_COUNT " << textures.count << "\n";
 
     out2.close();
