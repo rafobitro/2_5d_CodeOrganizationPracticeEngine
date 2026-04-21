@@ -20,3 +20,5 @@ void generate_grid_line_texture(uint32_t* bitmap);
 void bmp_loader(uint32_t* bitmap, std::string path);
 
 void init_Textures(Textures& Textures);
+
+void export_assets(Textures& textures, std::string path);

@@ -9,6 +9,7 @@
 
 
 
+
 #include <windows.h>
 #include <cmath>
 
@@ -26,7 +27,7 @@ struct Window_Context {
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM w, LPARAM l) {
 
-    Window_Context* ctx = (Window_Context*)GetWindowLongPtrW(hwnd, GWLP_USERDATA);
+   Window_Context* ctx = (Window_Context*)GetWindowLongPtrW(hwnd, GWLP_USERDATA);
 
    switch (msg) {
      case WM_SIZE: {
@@ -77,6 +78,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
     Game_state state;
     init_Player(state.player);
     memcpy(state.textures, data, sizeof(data));
+
     state.framebuffer = (uint32_t*)malloc(4 * state.render_w * state.render_h);
 
     //populate BITMAPINFO

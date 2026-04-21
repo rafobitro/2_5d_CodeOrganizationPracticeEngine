@@ -92,7 +92,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prev, LPSTR cmd, int show) {
         }
 
         HDC dc = GetDC(hwnd);
-        StretchDIBits(dc, 0, 0, WIDTH, HIGTH, 0, 0, TEXTURE_SIZE, TEXTURE_SIZE, textures.data[4], &texture_info, DIB_RGB_COLORS, SRCCOPY);
+        StretchDIBits(dc, 0, 0, WIDTH, HIGTH, 0, 0, TEXTURE_SIZE, TEXTURE_SIZE, textures.data[9], &texture_info, DIB_RGB_COLORS, SRCCOPY);
 
         ReleaseDC(hwnd, dc);
     }

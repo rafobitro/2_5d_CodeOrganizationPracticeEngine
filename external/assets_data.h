@@ -1,0 +1,2 @@
+#define TEXTURE_SIZE 4096
+#define TEXTURES_COUNT 10

@@ -10,18 +10,19 @@
 
 #include "input.hpp"
 #include "player.hpp"
+#include "assets_data.h"
 
 
 struct Game_state {
     int render_w = RENDER_W;
     int render_h = RENDER_H;
     Player player;
-    uint32_t textures[10][4096];
+    uint32_t textures[TEXTURES_COUNT][TEXTURE_SIZE];
     uint32_t* framebuffer;
 
     int texture_map[MAP_H][MAP_W] = {
         
-        {657, 657, 756, 646, 545, 756, 657, 657},
+        {657, 657, 999, 999, 999, 756, 657, 657},
         {657, 657, 756, 646, 545, 756, 657, 657},
         {657, 657, 756, 646, 545, 756, 657, 657},
         {657, 657, 756, 646, 545, 756, 657, 657},
