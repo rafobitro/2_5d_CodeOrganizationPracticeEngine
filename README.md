@@ -55,7 +55,7 @@ Optimization Readiness – which is easier to optimize later using SIMD and mult
 
 * Basic texture generator (done in DOD)
 * Texture loading from images BMP  (done in DOD)
-* Adding assets to executable (partly done in DOD)
+* Adding assets to executable (done in DOD, need to call texture viewer to embed textures to executable)
 * Texture light precomputation (meybe)
 * Normal maps (maybe)
 * Texture editor (meybe)
@@ -174,11 +174,11 @@ delta time is much easier than I thought i just need to measure time of each fra
 
 game UI is overlay on top of the game renderer and it is working by modiflying part of the bitmap acording to the input like location and size of the input i added overflow to independed from a location even if the thing is not fit it would not cause a crash. Also i usued used coordinate abstraction to calculate cordinates independed from resolution . And I used Daniel Helper's font ` 8x8 basic.h` for the ASCII bitmaps.
 
-BMP loading is simple and complex at the same time. While reading about BMP files, I found a lot of conflicting information. Some sources say the bitmap data starts at byte 54, others say 150, and some mention different offsets entirely. There is also confusion about color formats: some use 4-byte RGBA, others 3-byte RGB, and some store colors in BGR order instead of RGB.
+BMP loading is simple and complex at the same time. While reading about BMP files, I found a lot of conflicting information. Some sources say the bitmap data starts at byte 54, others say 150, and some mention different offsets entirely. There is also confusion about color formats: some use 4-byte RGBA, others 3-byte RGB, and some store colors in BGR order instead of RGB. 
 
-So I started experimenting, iterating and changing different things until I could see part of the image. Once I figured out where the image data actually starts, things became clearer. In my case, almost nothing I found online matched. My BMP images used 4-byte BGRA format and the data started at byte 134. 
+So I started experimenting, iterating and changing different things until I could see pase of the image. Once I figured out where the image data actually starts, things became clearer. In my case, almost nothing I found online matched. My BMP images used 4-byte BGRA format and the data started at byte 134. 
 
-So, the verdict is this: different BMP files can have different structures. I am certain there is a way to analyze their internal layout and find a universal solution—for instance, by figuring out the meaning of those bits and bytes preceding the texture buffer that I initially skipped—but I wanted to keep things as simple as possible. In any case, "poking around" in the code wasn't difficult at all.
+But in the end, I had to upload more textures, and not all were in the same format, so I converted all into a standard 24-bit BMP structure to have uniformity, to not write multiple functions to do different texture types. In this case, it is standard, which starts at 54 and is BGR without an alpha channel. 
 
 In the end, I kept it simple. I read from the file, adjusted offsets until the image appeared correctly, and identified the color format visually. The loader itself is less than 10 lines. I also skipped the alpha channel, since it was not needed for the textures created by 711studios.
 
