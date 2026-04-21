@@ -50,7 +50,8 @@ Optimization Readiness – which is easier to optimize later using SIMD and mult
 **Textures**
 
 * Basic texture generator (done in DOD)
-* Texture loading from images BMP and addting to executable (partly done in DOD)
+* Texture loading from images BMP  (done in DOD)
+* Adding assets to executable (partly done in DOD)
 * Texture light precomputation (meybe)
 * Normal maps (maybe)
 * Texture editor (meybe)
@@ -105,9 +106,9 @@ Below are screenshots showing the current state of the engine. the second image 
 <img width="507" height="537" alt="image" src="https://github.com/user-attachments/assets/dfd0f0d9-031e-4186-a4c1-fb23dd9f2eb5" />
 
 ---          
-Below is WASM port running in Firefox browser (does not support loaded textures yet)
+Below is WASM port running in Firefox browser (In this resolution, it is running to the 240 browser cap  in Firefox and 210-ish in Chrome relis build)
 
-<img width="809" height="568" alt="image" src="https://github.com/user-attachments/assets/63068ba4-8602-4d86-bc40-84769471ab3d" />
+<img width="807" height="619" alt="image" src="https://github.com/user-attachments/assets/bf949627-1833-4364-a74a-8a4f2e87ca47" />
 
 
 ---
@@ -187,9 +188,8 @@ I used Emscripten to compile C++ to WebAssembly. It also generated a basic HTML 
 Browsers do not handle input in real time. Instead, they send events.
  To support browser input, I implemented simple checks: if a button is pressed, it is marked as pressed; otherwise, it is not. This part was easy.
 Rendering was the hardest part. I needed to share a chunk of C++ memory with JavaScript. To do this, I first had to enable the correct permissions in CMake. Then I passed two values to JavaScript: the start and end of the framebuffer. Using Emscripten boilerplate code, I transferred the data and converted my RGB format to the web’s BGRA format by setting the alpha channel to 255 and swapping the red and blue channels.
-File loading is different on the web. It does not use a standard file system, so assets must either be embedded into the executable or handled using Emscripten’s file system. I am not using either yet.
-Also, it must be started differently. I cannot just open the HTML file. I need to run a web server. I used:
-python -m http.server 8080
+File loading is different on the web. It does not use a standard file system, so assets must either be embedded into the executable or handled using Emscripten’s file system. I am not using a function to translate texture to .h code, meaning embedding into the system.
+Also, it must be started differently. I cannot just open the HTML file. I need to run a web server. I used: python -m http.server 8080
 
 I also used the default Emscripten HTML template, which includes the Emscripten logo. I may change it later and write my own HTML.
-Performance on the web is worse and not close to native, as was expected.
+Performance on the web was worse than native but better than I expected. 
