@@ -5,7 +5,7 @@
 
 Web assembly is built for quick try in browsers. Not always up to date, and worse performance than native.\
 
-[DOD_engine_web](https://rafobitro.github.io/2_5d_CodeOrganizationPracticeEngine/)
+[DOD_engine_web](https://rafobitro.github.io/2_5d_CodeOrganizationPracticeEngine/) (W A S D, to walk , Q E to rotate)
 
 A complex raycasting engine written in C++ and rewritten multiple times using different programming paradigms to compare code organization, readability, performance, and suitability for optimization techniques such as SIMD and multicore computing.
 
